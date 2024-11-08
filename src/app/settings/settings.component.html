@@ -1,0 +1,563 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<div class="grid p-3 pb-2">
+  <div class="grid flex col-12 p-0">
+    <div class="col-2 py-0">
+      <p-image
+        src="icon/logo-3.png"
+        alt="Image"
+        width="230"
+        height="330"
+        class=""
+        styleClass=" border-round"
+      />
+    </div>
+    <div class="col-12 p-0 md:col-10">
+      <p-tabView (activeIndexChange)="activeIndexChange($event)">
+        <p-tabPanel header="Add">
+          <div class="flex border-1 border-round">
+            <div class="col-fixed">
+              <div class="field grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 80px"
+                  >Path:</label
+                >
+                <div class="col">
+                  <input
+                    type="text"
+                    pInputText
+                    [style]="{ width: '300px' }"
+                    [(ngModel)]="uploadFilePath"
+                    [disabled]="true"
+                  />
+                </div>
+              </div>
+              <div class="field grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 80px"
+                  >Name:</label
+                >
+                <div class="col">
+                  <input
+                    type="text"
+                    pInputText
+                    [style]="{ width: '300px' }"
+                    [(ngModel)]="selectedFileName"
+                  />
+                </div>
+              </div>
+              <div class="grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 80px"
+                  >Size:</label
+                >
+                <div class="col flex">
+                  <div>
+                    <div class="field grid">
+                      <label
+                        for="path"
+                        class="font-bold col-fixed"
+                        style="width: 80px"
+                        >Width:</label
+                      >
+                      <div class="col">
+                        <p-inputGroup [style]="{ width: '160px' }">
+                          <p-inputNumber
+                            inputId="minmaxfraction"
+                            mode="decimal"
+                            [minFractionDigits]="2"
+                            [maxFractionDigits]="5"
+                            [(ngModel)]="chequeWidth"
+                          />
+                          <p-inputGroupAddon>cm</p-inputGroupAddon>
+                        </p-inputGroup>
+                      </div>
+                    </div>
+                    <div class="field grid">
+                      <label
+                        for="path"
+                        class="font-bold col-fixed"
+                        style="width: 80px"
+                        >Height:</label
+                      >
+                      <div class="col">
+                        <p-inputGroup [style]="{ width: '160px' }">
+                          <p-inputNumber
+                            inputId="minmaxfraction"
+                            mode="decimal"
+                            [minFractionDigits]="2"
+                            [maxFractionDigits]="5"
+                            [(ngModel)]="chequeHeight"
+                          />
+                          <p-inputGroupAddon>cm</p-inputGroupAddon>
+                        </p-inputGroup>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field grid justify-content-end">
+                    <p-button
+                      label="Apply"
+                      [raised]="true"
+                      size="small"
+                      severity="info"
+                      class="ml-3"
+                      [disabled]="isDisplayApplyBtn"
+                      (onClick)="resizeBGImage()"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col flex">
+              <p-fileUpload
+                name="file"
+                [url]="uploadFileURL"
+                [multiple]="false"
+                (onUpload)="onUpload($event)"
+                (onBeforeUpload)="beforeUpload($event)"
+                (onSelect)="onFileSelect($event)"
+                accept=".jpg"
+                chooseStyleClass="p-ripple p-button-info p-button-raised p-button-text"
+                uploadStyleClass="p-ripple p-button-success p-button-raised p-button-text"
+                cancelStyleClass="p-ripple p-button-danger p-button-raised p-button-text"
+                removeStyleClass="p-ripple p-button-danger p-button-raised p-button-text"
+                chooseLabel="Add Image"
+                uploadLabel="Upload Image"
+                class="mr-2"
+                (onClear)="onFileClear()"
+                (onRemove)="onFileClear()"
+              >
+              </p-fileUpload>
+            </div>
+          </div>
+        </p-tabPanel>
+        <p-tabPanel header="Edit">
+          <div class="flex border-1 border-round">
+            <div class="col-fixed">
+              <div class="field grid">
+                <label
+                  for="bankName"
+                  class="font-bold col-fixed"
+                  style="width: 80px"
+                  >Bank:</label
+                >
+                <div class="col">
+                  <p-dropdown
+                    [options]="banks"
+                    [(ngModel)]="selectedBank"
+                    optionLabel="bankName"
+                    [filter]="true"
+                    filterBy="bankName"
+                    [showClear]="true"
+                    [checkmark]="true"
+                    placeholder="Select a Bank"
+                    inputId="bankName"
+                    [style]="{ width: '300px' }"
+                    (onChange)="fetchCheque()"
+                  />
+                </div>
+              </div>
+              <div class="field grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 80px"
+                  >Name:</label
+                >
+                <div class="col">
+                  <input
+                    type="text"
+                    pInputText
+                    [style]="{ width: '300px' }"
+                    [(ngModel)]="selectedBankName"
+                    [disabled]="selectedBank != null"
+                  />
+                </div>
+              </div>
+              <div class="grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 80px"
+                  >Size:</label
+                >
+                <div class="col flex">
+                  <div>
+                    <div class="field grid">
+                      <label
+                        for="path"
+                        class="font-bold col-fixed"
+                        style="width: 80px"
+                        >Width:</label
+                      >
+                      <div class="col">
+                        <p-inputGroup [style]="{ width: '160px' }">
+                          <p-inputNumber
+                            inputId="minmaxfraction"
+                            mode="decimal"
+                            [minFractionDigits]="2"
+                            [maxFractionDigits]="5"
+                            [(ngModel)]="chequeWidth"
+                          />
+                          <p-inputGroupAddon>cm</p-inputGroupAddon>
+                        </p-inputGroup>
+                      </div>
+                    </div>
+                    <div class="field grid">
+                      <label
+                        for="path"
+                        class="font-bold col-fixed"
+                        style="width: 80px"
+                        >Height:</label
+                      >
+                      <div class="col">
+                        <p-inputGroup [style]="{ width: '160px' }">
+                          <p-inputNumber
+                            inputId="minmaxfraction"
+                            mode="decimal"
+                            [minFractionDigits]="2"
+                            [maxFractionDigits]="5"
+                            [(ngModel)]="chequeHeight"
+                          />
+                          <p-inputGroupAddon>cm</p-inputGroupAddon>
+                        </p-inputGroup>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field grid justify-content-end">
+                    <p-button
+                      label="Apply"
+                      [raised]="true"
+                      size="small"
+                      severity="info"
+                      class="ml-3"
+                      [disabled]="selectedBank == null"
+                      (onClick)="resizeBGImageEdit()"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col flex">
+              <p-fileUpload
+                name="file"
+                [url]="uploadFileURL"
+                [multiple]="false"
+                (onUpload)="onUpload($event)"
+                (onBeforeUpload)="beforeUploadEdit($event)"
+                (onSelect)="onFileSelectEdit($event)"
+                accept=".jpg"
+                chooseStyleClass="p-ripple p-button-info p-button-raised p-button-text"
+                uploadStyleClass="p-ripple p-button-success p-button-raised p-button-text"
+                cancelStyleClass="p-ripple p-button-danger p-button-raised p-button-text"
+                removeStyleClass="p-ripple p-button-danger p-button-raised p-button-text"
+                chooseLabel="Change Image"
+                uploadLabel="Upload Image"
+                class="mr-2"
+                (onClear)="onFileClear()"
+                (onRemove)="onFileClear()"
+                [disabled]="selectedBank == null"
+              >
+              </p-fileUpload>
+            </div>
+          </div>
+        </p-tabPanel>
+        <p-tabPanel header="Delete">
+          <div class="flex border-1 border-round">
+            <div class="col-fixed" style="width: 470px">
+              <div class="field grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 80px"
+                  >Bank:</label
+                >
+                <div class="col">
+                  <p-dropdown
+                    [options]="banks"
+                    [(ngModel)]="selectedBank"
+                    optionLabel="bankName"
+                    [filter]="true"
+                    filterBy="bankName"
+                    [showClear]="true"
+                    [checkmark]="true"
+                    placeholder="Select a Bank"
+                    inputId="bankName"
+                    [style]="{ width: '300px' }"
+                    (onChange)="fetchCheque()"
+                  />
+                </div>
+              </div>
+              <div class="field grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 80px"
+                  >Name:</label
+                >
+                <div class="col">
+                  <input
+                    type="text"
+                    pInputText
+                    [style]="{ width: '300px' }"
+                    [(ngModel)]="selectedBankName"
+                    [disabled]="true"
+                  />
+                </div>
+              </div>
+              <div class="grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 80px"
+                  >Size:</label
+                >
+                <div class="col">
+                  <div class="field grid">
+                    <label
+                      for="path"
+                      class="font-bold col-fixed"
+                      style="width: 80px"
+                      >Width:</label
+                    >
+                    <div class="col">
+                      <p-inputGroup [style]="{ width: '220px' }">
+                        <p-inputNumber
+                          inputId="minmaxfraction"
+                          mode="decimal"
+                          [minFractionDigits]="2"
+                          [maxFractionDigits]="5"
+                          [(ngModel)]="chequeWidth"
+                          [disabled]="true"
+                        />
+                        <p-inputGroupAddon>cm</p-inputGroupAddon>
+                      </p-inputGroup>
+                    </div>
+                  </div>
+                  <div class="field grid">
+                    <label
+                      for="path"
+                      class="font-bold col-fixed"
+                      style="width: 80px"
+                      >Height:</label
+                    >
+                    <div class="col">
+                      <p-inputGroup [style]="{ width: '220px' }">
+                        <p-inputNumber
+                          inputId="minmaxfraction"
+                          mode="decimal"
+                          [minFractionDigits]="2"
+                          [maxFractionDigits]="5"
+                          [(ngModel)]="chequeHeight"
+                          [disabled]="true"
+                        />
+                        <p-inputGroupAddon>cm</p-inputGroupAddon>
+                      </p-inputGroup>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col flex">
+              <div class="">
+                <p-button
+                  [text]="true"
+                  [raised]="true"
+                  class="mr-2"
+                  severity="info"
+                  (onClick)="deleteCheque()"
+                >
+                  <div class="flex flex-column align-items-center">
+                    <img src="icon/delete-cheque.png" alt="icon" />
+                    <span class="text-sm mt-1">Delete</span>
+                  </div></p-button
+                >
+
+                <p-button
+                  [text]="true"
+                  [raised]="true"
+                  class="mr-2"
+                  severity="info"
+                  (onClick)="clear()"
+                >
+                  <div class="flex flex-column align-items-center">
+                    <img src="icon/cancel-cheque.png" alt="icon" />
+                    <span class="text-sm mt-1">Cancel</span>
+                  </div></p-button
+                >
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+
+  <div class="pt-2 col-12 p-0">
+    <p-card class="col-12 p-0">
+      <div class="flex">
+        <div class="col-fixed" style="width: 250px">
+          <p-card>
+            <div class="text-center font-bold mb-2">Postion</div>
+            <div class="remote-control ios-style">
+              <!-- Top Button -->
+              <p-button
+                icon="pi pi-arrow-up"
+                class="circle-btn ios-btn"
+                (onClick)="moveText('up')"
+                [disabled]="!isTextNavigation"
+              ></p-button>
+
+              <div class="middle-row">
+                <!-- Left Button -->
+                <p-button
+                  icon="pi pi-arrow-left"
+                  class="circle-btn ios-btn"
+                  (onClick)="moveText('left')"
+                  [disabled]="!isTextNavigation"
+                ></p-button>
+
+                <!-- Empty space for proper alignment -->
+                <div class="empty-space"></div>
+
+                <!-- Right Button -->
+                <p-button
+                  icon="pi pi-arrow-right"
+                  class="circle-btn ios-btn"
+                  (onClick)="moveText('right')"
+                  [disabled]="!isTextNavigation"
+                ></p-button>
+              </div>
+
+              <!-- Bottom Button -->
+              <p-button
+                icon="pi pi-arrow-down"
+                class="circle-btn ios-btn"
+                (onClick)="moveText('down')"
+                [disabled]="!isTextNavigation"
+              ></p-button>
+            </div>
+
+            <div class="border-top-1 my-2"></div>
+            <div class="text-center font-bold mb-2">Box Size</div>
+
+            <div class="flex justify-content-around align-items-center">
+              <p-button
+                icon="pi pi-search-minus"
+                [rounded]="true"
+                [outlined]="true"
+                size="small"
+                (onClick)="decreaseTextboxWidth()"
+                [disabled]="!isTextNavigation"
+              />
+              <p-button
+                icon="pi pi-search-plus"
+                [rounded]="true"
+                [outlined]="true"
+                size="small"
+                (onClick)="increaseTextboxWidth()"
+                [disabled]="!isTextNavigation"
+              />
+            </div>
+            <div class="border-top-1 my-2"></div>
+            <div class="text-center font-bold mb-2">Text Size</div>
+            <div class="flex justify-content-around align-items-center">
+              <p-button
+                icon="pi pi-minus-circle"
+                [rounded]="true"
+                [outlined]="true"
+                size="small"
+                (onClick)="decreaseFontSize()"
+                [disabled]="!isTextNavigation"
+              />
+
+              <p-button
+                icon="pi pi-plus-circle"
+                [rounded]="true"
+                [outlined]="true"
+                size="small"
+                (onClick)="increaseFontSize()"
+                [disabled]="!isTextNavigation"
+              />
+            </div>
+
+            <div
+              class="flex justify-content-center align-items-center mt-3 mb-2"
+            >
+              <p-button
+                [text]="true"
+                [raised]="true"
+                size="small"
+                class="mr-2"
+                (onClick)="toggleBold()"
+                [disabled]="!isTextNavigation"
+              >
+                <i class="fas fa-bold"></i
+              ></p-button>
+
+              <p-button
+                [text]="true"
+                [raised]="true"
+                size="small"
+                class="mr-2"
+                (onClick)="toggleItalic()"
+                [disabled]="!isTextNavigation"
+              >
+                <i class="fas fa-italic"></i>
+              </p-button>
+
+              <p-button
+                [text]="true"
+                [raised]="true"
+                size="small"
+                (onClick)="toggleUnderline()"
+                [disabled]="!isTextNavigation"
+              >
+                <i class="fas fa-underline"></i>
+              </p-button>
+            </div>
+          </p-card>
+        </div>
+        <div class="col flex">
+          <app-image-manipulation
+            class="mr-2"
+            (objectSelected)="onTextObjectSelection($event)"
+          />
+          <ng-container *ngIf="isSaveCancelButtonShow">
+            <p-button
+              [text]="true"
+              [raised]="true"
+              class="mr-2"
+              severity="info"
+              (onClick)="saveOrUpdateCheque()"
+            >
+              <div class="flex flex-column align-items-center">
+                <img src="icon/save-cheque.png" alt="icon" />
+                <span class="text-sm mt-1">Save</span>
+              </div></p-button
+            >
+
+            <p-button
+              [text]="true"
+              [raised]="true"
+              class="mr-2"
+              severity="info"
+              (onClick)="clear()"
+            >
+              <div class="flex flex-column align-items-center">
+                <img src="icon/cancel-cheque.png" alt="icon" />
+                <span class="text-sm mt-1">Cancel</span>
+              </div></p-button
+            >
+          </ng-container>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>

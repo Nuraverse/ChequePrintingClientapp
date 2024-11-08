@@ -1,0 +1,123 @@
+:host ::ng-deep .remote-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+:host ::ng-deep .middle-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px; /* Space for center button */
+}
+
+/* iOS-style circular button */
+:host ::ng-deep .ios-btn .p-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* Ensures circular shape */
+  padding: 0;
+  background: linear-gradient(145deg, #f2f2f2, #e0e0e0); /* Subtle gradient */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* Soft shadow */
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+:host ::ng-deep .ios-btn .p-button:hover {
+  transform: scale(1.05); /* Slightly enlarges on hover */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+}
+
+:host ::ng-deep .ios-btn .p-button:active {
+  background: linear-gradient(145deg, #e0e0e0, #d0d0d0); /* Pressed state */
+}
+
+:host ::ng-deep .ios-btn .p-button-icon {
+  font-size: 15px;
+  color: #333; /* Dark, subtle icon color */
+}
+
+/* Placeholder to maintain alignment for left and right buttons */
+:host ::ng-deep .empty-space {
+  width: 10px;
+  height: 10px;
+  visibility: hidden; /* Keeps the space without showing anything */
+}
+
+:host ::ng-deep .p-card .p-card-body {
+  padding: 0.5rem;
+}
+
+:host ::ng-deep .p-card .p-card-content {
+  padding: 0;
+}
+
+:host ::ng-deep .p-slider .p-slider-handle {
+  height: 20px;
+  width: 20px;
+  background: #e2e8f0;
+  border: 0 none;
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s,
+    box-shadow 0.2s, outline-color 0.2s;
+}
+
+:host ::ng-deep .custom-icon {
+  position: absolute;
+  margin-top: 13px;
+  font-size: 10px;
+}
+
+:host
+  ::ng-deep
+  button.p-ripple.p-element.p-button.p-component.p-button-icon-only.p-button-rounded.p-button-outlined.p-button-sm {
+  height: 2rem;
+  width: 2rem;
+}
+
+:host ::ng-deep .p-inputtext {
+  padding: 0.4rem;
+}
+:host ::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  padding: 0.75rem;
+}
+
+:host ::ng-deep .p-button.p-button-sm {
+  font-size: 0.775rem;
+  padding: 0.35rem 0.5rem;
+}
+
+:host ::ng-deep .p-inputtext:disabled {
+  opacity: 1;
+  background-color: #f9fafb;
+  color: #64748b;
+}
+.custom-icon-pen {
+  position: absolute;
+  width: 35px;
+  height: 35px;
+}
+
+:host
+  ::ng-deep
+  .p-inputgroup
+  > .p-inputwrapper
+  > .p-inputnumber
+  > .p-inputnumber-input {
+  border-radius: 0;
+  margin: 0;
+}
+
+:host ::ng-deep span.border-round.p-image.p-component img {
+  border-radius: 10px;
+}
+
+:host ::ng-deep .p-toast {
+  width: auto;
+}
+
+:host ::ng-deep .p-inputtext:disabled {
+  opacity: 0.5;
+  background-color: #e2e8f0;
+  color: #64748b;
+}

@@ -1,0 +1,952 @@
+<p-toast></p-toast>
+<div class="grid">
+  <div class="col-12 md:col-2">
+    <div class="col p-0">
+      <p-image
+        src="icon/logo-3.png"
+        alt="Image"
+        width="230"
+        class="ml-1"
+        styleClass=" border-round"
+      />
+    </div>
+
+    <div class="col p-0 mt-2">
+      <p-card>
+        <div class="text-center font-bold mb-2">Postion</div>
+        <div class="remote-control ios-style">
+          <!-- Top Button -->
+          <p-button
+            icon="pi pi-arrow-up"
+            class="circle-btn ios-btn"
+            (onClick)="moveText('up')"
+            [disabled]="!isTextNavigation"
+          ></p-button>
+
+          <div class="middle-row">
+            <!-- Left Button -->
+            <p-button
+              icon="pi pi-arrow-left"
+              class="circle-btn ios-btn"
+              (onClick)="moveText('left')"
+              [disabled]="!isTextNavigation"
+            ></p-button>
+
+            <!-- Empty space for proper alignment -->
+            <div class="empty-space"></div>
+
+            <!-- Right Button -->
+            <p-button
+              icon="pi pi-arrow-right"
+              class="circle-btn ios-btn"
+              (onClick)="moveText('right')"
+              [disabled]="!isTextNavigation"
+            ></p-button>
+          </div>
+
+          <!-- Bottom Button -->
+          <p-button
+            icon="pi pi-arrow-down"
+            class="circle-btn ios-btn"
+            (onClick)="moveText('down')"
+            [disabled]="!isTextNavigation"
+          ></p-button>
+        </div>
+
+        <div class="border-top-1 my-2"></div>
+        <div class="text-center font-bold mb-2">Box Size</div>
+
+        <div class="flex justify-content-around align-items-center">
+          <p-button
+            icon="pi pi-search-minus"
+            [rounded]="true"
+            [outlined]="true"
+            size="small"
+            (onClick)="decreaseTextboxWidth()"
+            [disabled]="!isTextNavigation"
+          />
+          <p-button
+            icon="pi pi-search-plus"
+            [rounded]="true"
+            [outlined]="true"
+            size="small"
+            (onClick)="increaseTextboxWidth()"
+            [disabled]="!isTextNavigation"
+          />
+        </div>
+        <div class="border-top-1 my-2"></div>
+        <div class="text-center font-bold mb-2">Text Size</div>
+        <div class="flex justify-content-around align-items-center">
+          <p-button
+            icon="pi pi-minus-circle"
+            [rounded]="true"
+            [outlined]="true"
+            size="small"
+            (onClick)="decreaseFontSize()"
+            [disabled]="!isTextNavigation"
+          />
+
+          <p-button
+            icon="pi pi-plus-circle"
+            [rounded]="true"
+            [outlined]="true"
+            size="small"
+            (onClick)="increaseFontSize()"
+            [disabled]="!isTextNavigation"
+          />
+        </div>
+
+        <div class="flex justify-content-center align-items-center mt-3 mb-2">
+          <p-button
+            [text]="true"
+            [raised]="true"
+            size="small"
+            class="mr-2"
+            (onClick)="toggleBold()"
+            [disabled]="!isTextNavigation"
+          >
+            <i class="fas fa-bold"></i
+          ></p-button>
+
+          <p-button
+            [text]="true"
+            [raised]="true"
+            size="small"
+            class="mr-2"
+            (onClick)="toggleItalic()"
+            [disabled]="!isTextNavigation"
+          >
+            <i class="fas fa-italic"></i>
+          </p-button>
+
+          <p-button
+            [text]="true"
+            [raised]="true"
+            size="small"
+            (onClick)="toggleUnderline()"
+            [disabled]="!isTextNavigation"
+          >
+            <i class="fas fa-underline"></i>
+          </p-button>
+        </div>
+        <div class="border-top-1 my-2"></div>
+        <div class="text-center font-bold mb-2">Field</div>
+        <div class="flex flex-column">
+          <p-checkbox
+            label="Date"
+            class="mb-2"
+            name="date"
+            [binary]="true"
+            [(ngModel)]="dateChecked"
+            (onChange)="hideShowTextbox(0, dateChecked)"
+          />
+          <p-checkbox
+            label="Payee"
+            class="mb-2"
+            name="payee"
+            value="Payee"
+            [binary]="true"
+            [(ngModel)]="payeeChecked"
+            (onChange)="hideShowTextbox(1, payeeChecked)"
+          />
+          <p-checkbox
+            label="Amount in words"
+            class="mb-2"
+            name="AIW"
+            value="AIW"
+            [binary]="true"
+            [(ngModel)]="aiwChecked"
+            (onChange)="
+              hideShowTextbox(2, aiwChecked); hideShowTextbox(3, aiwChecked)
+            "
+          />
+          <p-checkbox
+            label="Amount in numbers"
+            class="mb-2"
+            name="AIN"
+            value="AIN"
+            [binary]="true"
+            [(ngModel)]="ainChecked"
+            (onChange)="
+              hideShowTextbox(4, ainChecked); hideShowTextbox(5, ainChecked)
+            "
+          />
+          <p-checkbox
+            label="AC PAYEE"
+            class="mb-2"
+            name="acpayee"
+            value="AC Payee"
+            [binary]="true"
+            [(ngModel)]="acpayeeChecked"
+            (onChange)="hideShowTextbox(6, acpayeeChecked)"
+          />
+        </div>
+      </p-card>
+    </div>
+  </div>
+  <div class="col-12 md:col-10">
+    <div class="col grid p-0 mb-1">
+      <label
+        for="bankName"
+        class="font-bold col-fixed mt-2"
+        style="width: 131px"
+        >Bank Name:</label
+      >
+      <div class="col">
+        <p-dropdown
+          [options]="banks"
+          [(ngModel)]="selectedBank"
+          optionLabel="bankName"
+          [filter]="true"
+          filterBy="bankName"
+          [showClear]="false"
+          [checkmark]="true"
+          placeholder="Select a Bank"
+          inputId="bankName"
+          [style]="{ width: '300px' }"
+          (onChange)="fetchCheque()"
+        />
+      </div>
+    </div>
+
+    <div class="col-12 p-0 mb-3">
+      <p-tabView>
+        <p-tabPanel header="Period 1">
+          <div class="grid">
+            <div class="grid col-2">
+              <label for="period1" class="font-bold col-fixed">Period 1</label>
+              <div class="col">
+                <p-checkbox
+                  [(ngModel)]="period1Checked"
+                  [binary]="true"
+                  inputId="period1"
+                  [disabled]="selectedBank == null"
+                  (onChange)="calculateLastPeriodDate()"
+                />
+              </div>
+            </div>
+            <div class="grid col">
+              <label for="automode" class="font-bold col-fixed"
+                >Auto Mode</label
+              >
+              <div class="col">
+                <p-checkbox
+                  [binary]="true"
+                  [(ngModel)]="autoMode"
+                  inputId="automode"
+                  (onChange)="onAutoMode()"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="border-1 border-round p-2">
+            <div class="col grid mt-2">
+              <label for="conractNo" class="font-bold mt-2" style="width: 200px"
+                >Contract No:</label
+              >
+              <div class="">
+                <p-inputNumber
+                  inputId="conractNo"
+                  [(ngModel)]="contractNo"
+                  [style]="{ width: '300px' }"
+                  [disabled]="!period1Checked || selectedBank == null"
+                  [useGrouping]="false"
+                />
+              </div>
+
+              <p-button
+                label="Apply"
+                [raised]="true"
+                size="small"
+                severity="info"
+                class="ml-3 mt-1"
+                [disabled]="
+                  !period1Checked ||
+                  contractNo == undefined ||
+                  contractNo == 0 ||
+                  !autoMode ||
+                  selectedBank == null
+                "
+                (onClick)="fetchContract()"
+              />
+            </div>
+            <div class="grid col p-0">
+              <div class="col-12 md:col-6">
+                <div class="col grid p-0">
+                  <label
+                    for="firstChequeDate"
+                    class="font-bold col-fixed mt-2"
+                    style="width: 200px"
+                    >First Cheque Date:</label
+                  >
+                  <div class="col">
+                    <p-calendar
+                      [(ngModel)]="firstChequeDate"
+                      [iconDisplay]="'input'"
+                      [showIcon]="true"
+                      dateFormat="DD, dd MM,yy"
+                      inputId="firstChequeDate"
+                      [style]="{ width: '300px' }"
+                      [disabled]="
+                        !period1Checked ||
+                        autoMode ||
+                        contractNo == null ||
+                        contractNo == undefined
+                      "
+                      (onBlur)="calculateLastPeriodDate()"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="grid">
+                  <label
+                    for="period1amount"
+                    class="font-bold col-fixed"
+                    style="width: 200px"
+                    >First Cheque Amount:</label
+                  >
+                  <div class="col">
+                    <p-inputNumber
+                      inputId="period1amount"
+                      [(ngModel)]="period1Amount"
+                      [style]="{ width: '300px' }"
+                      [disabled]="
+                        !period1Checked ||
+                        autoMode ||
+                        contractNo == null ||
+                        contractNo == undefined
+                      "
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid col p-0">
+              <div class="col-12 md:col-6">
+                <div class="col grid p-0">
+                  <label
+                    for="lastChequeDate"
+                    class="font-bold col-fixed mt-2"
+                    style="width: 200px"
+                    >Last Cheque Date:</label
+                  >
+                  <div class="col">
+                    <p-calendar
+                      [(ngModel)]="lastChequeDate"
+                      [iconDisplay]="'input'"
+                      [showIcon]="true"
+                      dateFormat="DD, dd MM,yy"
+                      inputId="lastChequeDate"
+                      [style]="{ width: '300px' }"
+                      [disabled]="true"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="grid">
+                  <label
+                    for="period1LastAmount"
+                    class="font-bold col-fixed"
+                    style="width: 200px"
+                    >Last Cheque Amount:</label
+                  >
+                  <div class="col">
+                    <p-inputNumber
+                      inputId="period1LastAmount"
+                      [(ngModel)]="period1LastAmount"
+                      [style]="{ width: '300px' }"
+                      [disabled]="
+                        !period1Checked ||
+                        autoMode ||
+                        contractNo == null ||
+                        contractNo == undefined
+                      "
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid col p-0">
+              <label
+                for="period1Periods"
+                class="font-bold col-fixed"
+                style="width: 200px"
+                >Period:</label
+              >
+              <div class="col">
+                <p-inputNumber
+                  inputId="period1Periods"
+                  [showButtons]="true"
+                  min="1"
+                  max="84"
+                  [style]="{ width: '300px' }"
+                  [(ngModel)]="period1Periods"
+                  [disabled]="
+                    !period1Checked ||
+                    autoMode ||
+                    contractNo == null ||
+                    contractNo == undefined
+                  "
+                  (onBlur)="calculateLastPeriodDate()"
+                />
+              </div>
+            </div>
+
+            <div class="grid col p-0">
+              <div class="col flex justify-content-end align-items-center">
+                <span id="username-help" class="font-bold text-cyan-300">{{
+                  amountInWords1
+                }}</span>
+              </div>
+              <div class="col flex justify-content-end align-items-center">
+                <p-button
+                  [text]="true"
+                  [raised]="true"
+                  size="large"
+                  class="mr-2"
+                  severity="info"
+                  (onClick)="convertAmountInWords('period1')"
+                  [disabled]="!period1Checked"
+                >
+                  <ng-template pTemplate="icon">
+                    <img
+                      src="icon/file-write.png"
+                      alt="icon"
+                      class="custom-icon-pen"
+                    /> </ng-template
+                ></p-button>
+
+                <p-button
+                  [text]="true"
+                  [raised]="true"
+                  size="large"
+                  class="mr-2"
+                  icon="pi pi-trash"
+                  severity="danger"
+                  [disabled]="!period1Checked"
+                  (onClick)="clearPeriod1()"
+                />
+
+                <p-button
+                  [text]="true"
+                  [raised]="true"
+                  size="large"
+                  icon="pi pi-home"
+                  class="mr-2"
+                  (onClick)="clearAll()"
+                  [disabled]="!period1Checked"
+                />
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+        <p-tabPanel header="Period 2" [disabled]="autoMode || !period1Checked">
+          <div class="grid">
+            <label for="period2Checked" class="font-bold col-fixed"
+              >Period 2</label
+            >
+            <div class="col">
+              <p-checkbox
+                [(ngModel)]="period2Checked"
+                [binary]="true"
+                inputId="period2Checked"
+                (onChange)="calculateLastPeriodDate()"
+              />
+            </div>
+          </div>
+          <div class="border-1 border-round p-2">
+            <div class="grid mt-2">
+              <div class="col-12 md:col-6">
+                <div class="grid">
+                  <label
+                    for="period2Amount"
+                    class="font-bold col-fixed"
+                    style="width: 200px"
+                    >First Cheque Amount:</label
+                  >
+                  <div class="col">
+                    <p-inputNumber
+                      inputId="period2Amount"
+                      [(ngModel)]="period2Amount"
+                      [style]="{ width: '300px' }"
+                      [disabled]="!period2Checked"
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="col grid p-0">
+                  <label
+                    for="period2LastAmount"
+                    class="font-bold col-fixed mt-2"
+                    style="width: 200px"
+                    >Last Cheque Amount:</label
+                  >
+                  <div class="col">
+                    <p-inputNumber
+                      inputId="period2LastAmount"
+                      [(ngModel)]="period2LastAmount"
+                      [style]="{ width: '300px' }"
+                      [disabled]="!period2Checked"
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col p-0">
+              <div class="grid">
+                <label
+                  for="period2Periods"
+                  class="font-bold col-fixed"
+                  style="width: 200px"
+                  >Period:</label
+                >
+                <div class="col">
+                  <p-inputNumber
+                    inputId="period2Periods"
+                    [showButtons]="true"
+                    inputStyle="254px"
+                    min="1"
+                    max="100"
+                    [inputStyle]="{ width: '254px' }"
+                    [(ngModel)]="period2Periods"
+                    [disabled]="!period2Checked"
+                    (onBlur)="calculateLastPeriodDate()"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="grid col p-0">
+              <div class="col flex justify-content-end align-items-center">
+                <span id="username-help" class="font-bold text-cyan-300">{{
+                  amountInWords2
+                }}</span>
+              </div>
+              <div class="col flex justify-content-end align-items-center">
+                <div class="">
+                  <p-button
+                    [text]="true"
+                    [raised]="true"
+                    size="large"
+                    class="mr-2"
+                    severity="info"
+                    (onClick)="convertAmountInWords('period2')"
+                    [disabled]="!period2Checked"
+                  >
+                    <ng-template pTemplate="icon">
+                      <img
+                        src="icon/file-write.png"
+                        alt="icon"
+                        class="custom-icon-pen"
+                      /> </ng-template
+                  ></p-button>
+
+                  <p-button
+                    [text]="true"
+                    [raised]="true"
+                    size="large"
+                    class="mr-2"
+                    icon="pi pi-trash"
+                    severity="danger"
+                    (onClick)="clearPeriod2()"
+                    [disabled]="!period2Checked"
+                  />
+
+                  <p-button
+                    [text]="true"
+                    [raised]="true"
+                    size="large"
+                    icon="pi pi-home"
+                    class="mr-2"
+                    (onClick)="clearAll()"
+                    [disabled]="!period2Checked"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+        <p-tabPanel header="Period 3" [disabled]="autoMode || !period1Checked">
+          <div class="grid">
+            <label for="period3Checked" class="font-bold col-fixed"
+              >Period 3</label
+            >
+            <div class="col">
+              <p-checkbox
+                [(ngModel)]="period3Checked"
+                [binary]="true"
+                inputId="period3Checked"
+                (onChange)="calculateLastPeriodDate()"
+              />
+            </div>
+          </div>
+          <div class="border-1 border-round p-2">
+            <div class="grid mt-2">
+              <div class="col-12 md:col-6">
+                <div class="grid">
+                  <label
+                    for="period3Amount"
+                    class="font-bold col-fixed"
+                    style="width: 200px"
+                    >First Cheque Amount:</label
+                  >
+                  <div class="col">
+                    <p-inputNumber
+                      inputId="period3Amount"
+                      [(ngModel)]="period3Amount"
+                      [style]="{ width: '300px' }"
+                      [disabled]="!period3Checked"
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="col grid p-0">
+                  <label
+                    for="period3LastAmount"
+                    class="font-bold col-fixed mt-2"
+                    style="width: 200px"
+                    >Last Cheque Amount:</label
+                  >
+                  <div class="col">
+                    <p-inputNumber
+                      inputId="period3LastAmount"
+                      [(ngModel)]="period3LastAmount"
+                      [style]="{ width: '300px' }"
+                      [disabled]="!period3Checked"
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col p-0">
+              <div class="grid">
+                <label
+                  for="period3Periods"
+                  class="font-bold col-fixed"
+                  style="width: 200px"
+                  >Period:</label
+                >
+                <div class="col">
+                  <p-inputNumber
+                    inputId="period3Periods"
+                    [showButtons]="true"
+                    inputStyle="254px"
+                    min="1"
+                    max="100"
+                    [inputStyle]="{ width: '254px' }"
+                    [(ngModel)]="period3Periods"
+                    [disabled]="!period3Checked"
+                    (onBlur)="calculateLastPeriodDate()"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="grid col p-0">
+              <div class="col flex justify-content-end align-items-center">
+                <span id="username-help" class="font-bold text-cyan-300">{{
+                  amountInWords3
+                }}</span>
+              </div>
+              <div class="col flex justify-content-end align-items-center">
+                <div class="">
+                  <p-button
+                    [text]="true"
+                    [raised]="true"
+                    size="large"
+                    class="mr-2"
+                    severity="info"
+                    (onClick)="convertAmountInWords('period3')"
+                    [disabled]="!period3Checked"
+                  >
+                    <ng-template pTemplate="icon">
+                      <img
+                        src="icon/file-write.png"
+                        alt="icon"
+                        class="custom-icon-pen"
+                      /> </ng-template
+                  ></p-button>
+
+                  <p-button
+                    [text]="true"
+                    [raised]="true"
+                    size="large"
+                    class="mr-2"
+                    icon="pi pi-trash"
+                    severity="danger"
+                    (onClick)="clearPeriod3()"
+                    [disabled]="!period3Checked"
+                  />
+
+                  <p-button
+                    [text]="true"
+                    [raised]="true"
+                    size="large"
+                    icon="pi pi-home"
+                    class="mr-2"
+                    (onClick)="clearAll()"
+                    [disabled]="!period3Checked"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+        <p-tabPanel header="Period 4" [disabled]="autoMode || !period1Checked">
+          <div class="grid">
+            <label for="period4Checked" class="font-bold col-fixed"
+              >Period 4</label
+            >
+            <div class="col">
+              <p-checkbox
+                [(ngModel)]="period4Checked"
+                [binary]="true"
+                inputId="period4Checked"
+                (onChange)="calculateLastPeriodDate()"
+              />
+            </div>
+          </div>
+          <div class="border-1 border-round p-2">
+            <div class="grid mt-2">
+              <div class="col-12 md:col-6">
+                <div class="grid">
+                  <label
+                    for="period4Amount"
+                    class="font-bold col-fixed"
+                    style="width: 200px"
+                    >First Cheque Amount:</label
+                  >
+                  <div class="col">
+                    <p-inputNumber
+                      inputId="period4Amount"
+                      [(ngModel)]="period4Amount"
+                      [style]="{ width: '300px' }"
+                      [disabled]="!period4Checked"
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="col grid p-0">
+                  <label
+                    for="period4LastAmount"
+                    class="font-bold col-fixed mt-2"
+                    style="width: 200px"
+                    >Last Cheque Amount:</label
+                  >
+                  <div class="col">
+                    <p-inputNumber
+                      inputId="period4LastAmount"
+                      [(ngModel)]="period4LastAmount"
+                      [style]="{ width: '300px' }"
+                      [disabled]="!period4Checked"
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col p-0">
+              <div class="grid">
+                <label
+                  for="period4Periods"
+                  class="font-bold col-fixed"
+                  style="width: 200px"
+                  >Period:</label
+                >
+                <div class="col">
+                  <p-inputNumber
+                    inputId="period4Periods"
+                    [showButtons]="true"
+                    inputStyle="254px"
+                    min="1"
+                    max="100"
+                    [inputStyle]="{ width: '254px' }"
+                    [(ngModel)]="period4Periods"
+                    [disabled]="!period4Checked"
+                    (onBlur)="calculateLastPeriodDate()"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="grid col p-0">
+              <div class="col flex justify-content-end align-items-center">
+                <span id="username-help" class="font-bold text-cyan-300">{{
+                  amountInWords4
+                }}</span>
+              </div>
+              <div class="col flex justify-content-end align-items-center">
+                <div class="">
+                  <p-button
+                    [text]="true"
+                    [raised]="true"
+                    size="large"
+                    class="mr-2"
+                    severity="info"
+                    (onClick)="convertAmountInWords('period4')"
+                    [disabled]="!period4Checked"
+                  >
+                    <ng-template pTemplate="icon">
+                      <img
+                        src="icon/file-write.png"
+                        alt="icon"
+                        class="custom-icon-pen"
+                      /> </ng-template
+                  ></p-button>
+
+                  <p-button
+                    [text]="true"
+                    [raised]="true"
+                    size="large"
+                    class="mr-2"
+                    icon="pi pi-trash"
+                    severity="danger"
+                    (onClick)="clearPeriod4()"
+                    [disabled]="!period4Checked"
+                  />
+
+                  <p-button
+                    [text]="true"
+                    [raised]="true"
+                    size="large"
+                    icon="pi pi-home"
+                    class="mr-2"
+                    (onClick)="clearAll()"
+                    [disabled]="!period4Checked"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+    <div class="col-12 p-0">
+      <p-card class="custom">
+        <div class="flex">
+          <p-button
+            [text]="true"
+            [raised]="true"
+            class="mr-2"
+            severity="info"
+            (onClick)="viewData()"
+            [disabled]="
+              !selectedBank ||
+              amountInWords1 === '' ||
+              period1Amount === 0 ||
+              period1Amount === null ||
+              period1LastAmount === 0 ||
+              period1LastAmount === null ||
+              contractNo == null ||
+              contractNo == undefined
+            "
+          >
+            <div class="flex flex-column align-items-center">
+              <img src="icon/view-cheque.png" alt="icon" width="25" />
+              <span class="text-sm mt-1">View</span>
+            </div></p-button
+          >
+
+          <p-button
+            [text]="true"
+            [raised]="true"
+            class="mr-2"
+            severity="info"
+            [disabled]="
+              !selectedBank ||
+              amountInWords1 === '' ||
+              period1Amount === 0 ||
+              period1Amount === null ||
+              period1LastAmount === 0 ||
+              period1LastAmount === null ||
+              !viewDataFlag ||
+              contractNo == null ||
+              contractNo == undefined
+            "
+            (onClick)="printPreviewCanvas()"
+          >
+            <div class="flex flex-column align-items-center">
+              <i class="pi pi-print text-2xl"></i>
+              <i class="pi pi-eye custom-icon"></i>
+              <span class="text-sm mt-1">Preview</span>
+            </div>
+          </p-button>
+
+          <p-button
+            [text]="true"
+            [raised]="true"
+            class="mr-2"
+            [disabled]="
+              !selectedBank ||
+              amountInWords1 === '' ||
+              period1Amount === 0 ||
+              period1Amount === null ||
+              period1LastAmount === 0 ||
+              period1LastAmount === null ||
+              !viewDataFlag ||
+              contractNo == null ||
+              contractNo == undefined
+            "
+            (onClick)="printCanvas()"
+          >
+            <div class="flex flex-column align-items-center">
+              <i class="pi pi-print text-2xl"></i>
+              <span class="text-sm mt-1">Print</span>
+            </div>
+          </p-button>
+
+          <p-button
+            [text]="true"
+            [raised]="true"
+            class="mr-2"
+            severity="danger"
+            [disabled]="
+              !selectedBank ||
+              amountInWords1 === '' ||
+              period1Amount === 0 ||
+              period1Amount === null ||
+              period1LastAmount === 0 ||
+              period1LastAmount === null
+            "
+            (onClick)="resetCanvas()"
+          >
+            <div class="flex flex-column align-items-center">
+              <i class="pi pi-trash text-2xl"></i>
+              <span class="text-sm mt-1">Clear</span>
+            </div>
+          </p-button>
+        </div>
+        <div class="grid p-2 my-2">
+          <p-checkbox
+            label="Show BackgroundColor"
+            name="filed"
+            value="SB"
+            [binary]="true"
+            [(ngModel)]="showBackgroundColor"
+            (onChange)="toggleBackgroundColor()"
+          />
+
+          <span class="disabled-text col ml-5 col text-green-900">{{
+            amountDisplay
+          }}</span>
+        </div>
+
+        <app-image-manipulation
+          (objectSelected)="onTextObjectSelection($event)"
+        />
+      </p-card>
+    </div>
+  </div>
+</div>

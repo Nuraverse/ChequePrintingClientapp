@@ -1,0 +1,17 @@
+<div class="grid min-h-screen">
+  <div class="col-12 flex flex-column md:flex-row align-items-center justify-content-center gap-2 md:gap-5">
+    <p-button
+      label="Cheque Printing"
+      icon="pi pi-print"
+      (onClick)="navigateToPrintMaster()"
+      size="large"
+    ></p-button>
+
+    <p-button
+      label="Cheque Print Settings"
+      icon="pi pi-cog"
+      size="large"
+      (onClick)="navigateToPrintSettings()"
+    ></p-button>
+  </div>
+</div>
