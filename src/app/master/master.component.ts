@@ -3,11 +3,12 @@ import { SharedModule } from '../shared.module';
 import { AmountToWordsService } from '../service/amount-to-words/amount-to-words.service';
 import { ImageManipulationComponent } from '../image-manipulation/image-manipulation.component';
 import moment from 'moment';
-import { Bank, Cheque, Contract, Period } from '../model/model';
+import { Bank, Cheque, Agreement, Period, Frequency } from '../model/model';
 import { ChequeService } from '../service/cheque/cheque-service.service';
-import { MessageService } from 'primeng/api';
-import { ContractService } from '../service/contract/contract-service.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { AgreemrntService } from '../service/contract/contract-service.service';
 import { CommonUtils } from '../utils/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-master',
@@ -49,12 +50,28 @@ export class MasterComponent implements OnInit {
   period4LastAmount = 0;
   period4Periods = 1;
   amountDisplay = '';
-  contractNo!: number | null;
+  agreementNo!: number | null;
   selectedChequeObject!: Cheque;
   autoMode = true;
-  contractInfo!: Contract;
+  agreementInfo!: Agreement;
   viewDataFlag = false;
   isTextNavigation = false;
+  printOptions = [
+    { label: 'Both', value: 'both' },
+    { label: 'Front', value: 'front' },
+    { label: 'Back', value: 'back' },
+  ];
+
+  frequencyOptions: Frequency[] = [
+    { label: 'Monthly', value: 'M' },
+    { label: 'Bi-Monthly', value: 'BIM' },
+    { label: 'Quarterly', value: 'Q' },
+    { label: 'Half-Yearly', value: 'H' },
+    { label: 'Annually', value: 'A' },
+  ];
+
+  printValue = 'both';
+  selectedFrequency: Frequency = { label: 'Monthly', value: 'M' };
 
   @ViewChild(ImageManipulationComponent)
   imageComponent!: ImageManipulationComponent;
@@ -62,8 +79,10 @@ export class MasterComponent implements OnInit {
   constructor(
     private amountToWordsService: AmountToWordsService,
     private chequeService: ChequeService,
-    private contractService: ContractService,
-    private messageService: MessageService
+    private agreementService: AgreemrntService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -85,23 +104,32 @@ export class MasterComponent implements OnInit {
   }
 
   fetchContract(): void {
-    if (this.contractNo) {
+    if (this.agreementNo) {
       this.viewDataFlag = false;
-      this.contractService.getContract(this.contractNo).subscribe({
-        next: (contract: Contract) => {
-          if (contract.id != null) {
-            this.contractInfo = contract;
+      this.agreementService.getAgreement(this.agreementNo).subscribe({
+        next: (agreement: Agreement) => {
+          if (agreement.agreementNo != null) {
+            this.agreementInfo = agreement;
             this.firstChequeDate = moment(
-              contract.periodStartDate,
+              agreement.firstInstallmentDate,
               'YYYY-MM-DD'
             ).toDate();
-            this.period1Amount = contract.periodStartAmount;
-            this.period1LastAmount = contract.periodEndAmount;
-            this.period1Periods = contract.numberOfInstallment;
+            this.period1Amount = agreement.firstInstallmentAmount;
+            this.period1LastAmount = agreement.lastInstallmentAmount;
+            this.period1Periods = agreement.numberOfInstallment;
             const periodOfDates = CommonUtils.generateDatePeriods(
               moment(this.firstChequeDate).format('DD-MM-YYYY'),
-              contract.numberOfInstallment
+              agreement.numberOfInstallment,
+              this.selectedFrequency?.value
             );
+            const frequency = this.frequencyOptions.find(
+              (option) => option.value === agreement.frequency
+            );
+            if (frequency) {
+              this.selectedFrequency = frequency;
+            } else {
+              this.selectedFrequency = { label: 'Monthly', value: 'M' };
+            }
             this.lastChequeDate = moment(
               periodOfDates[periodOfDates.length - 1],
               'DD-MM-YYYY'
@@ -109,14 +137,16 @@ export class MasterComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'success',
-              detail: 'Contract information retrieved successfully!',
+              detail: 'Agreement information retrieved successfully!',
             });
           } else {
             this.messageService.add({
               severity: 'warn',
               summary: 'warn',
               detail:
-                'Contract information not available [' + this.contractNo + ']',
+                'Agreement information not available [' +
+                this.agreementNo +
+                ']',
             });
             this.clearPeriod1();
           }
@@ -201,12 +231,14 @@ export class MasterComponent implements OnInit {
         'DD-MM-YYYY'
       );
       const periods: Period[] = this.generatePeriods();
-      if (this.contractNo) {
+      if (this.agreementNo) {
         this.imageComponent.printPreviewCanvas(
           firstChequeDateStr,
           periods,
-          this.contractNo,
-          this.autoMode
+          this.agreementNo,
+          this.autoMode,
+          this.printValue,
+          this.selectedFrequency?.value
         );
       }
     }
@@ -214,18 +246,39 @@ export class MasterComponent implements OnInit {
 
   printCanvas() {
     if (this.imageComponent) {
-      const firstChequeDateStr = moment(this.firstChequeDate).format(
-        'DD-MM-YYYY'
-      );
-      const periods: Period[] = this.generatePeriods();
-      if (this.contractNo) {
-        this.imageComponent.printCanvas(
-          firstChequeDateStr,
-          periods,
-          this.contractNo,
-          this.autoMode
-        );
-      }
+      this.confirmationService.confirm({
+        message:
+          'Are you sure you want to print the cheques on <b style="font-size: 18px;">' +
+          this.printValue +
+          ' side? </b>',
+        header: 'Confirmation',
+        icon: 'pi pi-exclamation-triangle',
+        acceptButtonStyleClass: 'p-button-success ml-2',
+        rejectButtonStyleClass: 'p-button-warning',
+        accept: () => {
+          const firstChequeDateStr = moment(this.firstChequeDate).format(
+            'DD-MM-YYYY'
+          );
+          const periods: Period[] = this.generatePeriods();
+          if (this.agreementNo) {
+            this.imageComponent.printCanvas(
+              firstChequeDateStr,
+              periods,
+              this.agreementNo,
+              this.autoMode,
+              this.printValue,
+              this.selectedFrequency?.value
+            );
+          }
+        },
+        reject: () => {
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Cancelled',
+            detail: 'Cheque printing has been cancelled.',
+          });
+        },
+      });
     }
   }
 
@@ -400,8 +453,8 @@ export class MasterComponent implements OnInit {
 
       this.amountDisplay += ' => ' + totalAmount;
 
-      if (this.contractNo != 0) {
-        this.imageComponent.updateTextBack(this.contractNo + '', 0);
+      if (this.agreementNo != 0) {
+        this.imageComponent.updateTextBack(this.agreementNo + '', 0);
       }
       this.showBackgroundColor = false;
       this.toggleBackgroundColor();
@@ -499,8 +552,8 @@ export class MasterComponent implements OnInit {
       // Finally, append the total amount to the amountDisplay
       this.amountDisplay += ` => Total Amount: ${totalAmount}`;
 
-      if (this.contractNo !== 0) {
-        this.imageComponent.updateTextBack(this.contractNo + '', 0);
+      if (this.agreementNo !== 0) {
+        this.imageComponent.updateTextBack(this.agreementNo + '', 0);
       }
       this.showBackgroundColor = false;
       this.toggleBackgroundColor();
@@ -532,7 +585,7 @@ export class MasterComponent implements OnInit {
 
   clearPeriod1() {
     this.amountDisplay = '';
-    this.contractNo = null;
+    this.agreementNo = null;
     this.firstChequeDate = new Date();
     this.period1Amount = 0;
     this.period1LastAmount = 0;
@@ -540,6 +593,7 @@ export class MasterComponent implements OnInit {
     this.period1Periods = 1;
     this.amountInWords1 = '';
     this.viewDataFlag = false;
+    this.selectedFrequency = { label: 'Monthly', value: 'M' };
   }
 
   clearPeriod2() {
@@ -585,7 +639,8 @@ export class MasterComponent implements OnInit {
       if (periods != 0) {
         const periodOfDates = CommonUtils.generateDatePeriods(
           moment(this.firstChequeDate).format('DD-MM-YYYY'),
-          periods
+          periods,
+          this.selectedFrequency?.value
         );
         this.lastChequeDate = moment(
           periodOfDates[periodOfDates.length - 1],
@@ -600,5 +655,12 @@ export class MasterComponent implements OnInit {
     } else {
       this.isTextNavigation = false;
     }
+  }
+
+  navigateToPrintSettings() {
+    if (this.imageComponent) {
+      this.imageComponent.disposeCanvas();
+    }
+    this.router.navigate(['/cheque-print-settings']);
   }
 }

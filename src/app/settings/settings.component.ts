@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SharedModule } from '../shared.module';
 import { ImageManipulationComponent } from '../image-manipulation/image-manipulation.component';
@@ -7,6 +6,7 @@ import { environment } from '../../environments/environment';
 import { Bank, Cheque, FileUploadResponse } from '../model/model';
 import { FileBeforeUploadEvent, FileSelectEvent } from 'primeng/fileupload';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-settings',
@@ -41,7 +41,8 @@ export class SettingsComponent implements OnInit {
   constructor(
     private chequeService: ChequeService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -188,8 +189,9 @@ export class SettingsComponent implements OnInit {
       message: 'Are you sure you want to delete this cheque?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-success ml-2',
+      rejectButtonStyleClass: 'p-button-warning',
       accept: () => {
-        // User confirmed the deletion
         this.chequeService
           .deleteCheque(this.selectedBank ? this.selectedBank.id : 0)
           .subscribe({
@@ -419,5 +421,11 @@ export class SettingsComponent implements OnInit {
     } else {
       this.isTextNavigation = false;
     }
+  }
+  navigateToPrintMaster() {
+    if (this.imageComponent) {
+      this.imageComponent.disposeCanvas();
+    }
+    this.router.navigate(['/cheque-printing']);
   }
 }

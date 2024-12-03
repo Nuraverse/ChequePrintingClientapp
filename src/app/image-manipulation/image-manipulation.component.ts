@@ -284,8 +284,10 @@ export class ImageManipulationComponent implements OnInit {
   printCanvas(
     firstChequeDate: string,
     periods: Period[],
-    contractNo: number,
-    autoMode: boolean
+    agreementNo: number,
+    autoMode: boolean,
+    printType: string, // 'both', 'front', 'back'
+    frequency: string
   ) {
     let numberOfInstallment = 0;
 
@@ -299,7 +301,8 @@ export class ImageManipulationComponent implements OnInit {
     }
     const periodDates = CommonUtils.generateDatePeriods(
       firstChequeDate,
-      numberOfInstallment
+      numberOfInstallment,
+      frequency
     );
 
     // Save original canvas properties
@@ -312,13 +315,12 @@ export class ImageManipulationComponent implements OnInit {
     objects.forEach((obj, index) => {
       if (obj.type === 'textbox') {
         obj.set('backgroundColor', 'transparent');
-        if (index == 0) {
+        if (index === 0) {
           this.currentTextboxBackgroundColor = obj.backgroundColor;
         }
       }
     });
 
-    // Clear background and set transparent for printing
     objectsBack.forEach((objback) => {
       if (objback.type === 'textbox') {
         objback.set('backgroundColor', 'transparent');
@@ -332,28 +334,26 @@ export class ImageManipulationComponent implements OnInit {
     this.canvasBack.backgroundColor = 'transparent';
 
     // Array to hold data URLs for each page
-    const dataUrls: string[] = [];
+    const frontDataUrls: string[] = [];
 
-    this.updateTextBack(contractNo + '', 0);
+    this.updateTextBack(agreementNo + '', 0);
 
-    const dataUrlBack = this.canvasBack.toDataURL({
+    const backDataUrl = this.canvasBack.toDataURL({
       format: 'png',
       quality: 1,
       multiplier: 2,
     });
+
     // Process each dynamic data item and apply it to the canvas
-    let dateIndex = 0; // Start tracking index in periodDates
+    let dateIndex = 0;
 
     periods.forEach((period) => {
-      const periodEndIndex = dateIndex + period.periods - 1; // End index for the current period
+      const periodEndIndex = dateIndex + period.periods - 1;
 
-      // Loop through each installment date in the current period
       for (let i = dateIndex; i <= periodEndIndex; i++) {
         const currentDateStr = periodDates[i];
 
-        // Check if it's the first, last, or an intermediate installment in the period
         if (i === dateIndex && period.periods > 1) {
-          // First installment: Use start amount
           this.splitTextBetweenTwoObjects(
             this.amountToWordsService.convert(period.periodAmount),
             2,
@@ -362,7 +362,6 @@ export class ImageManipulationComponent implements OnInit {
           this.updateText(period.periodAmount + '/', 4);
           this.updateText('---', 5);
         } else if (i === periodEndIndex) {
-          // Last installment: Use last amount
           this.splitTextBetweenTwoObjects(
             this.amountToWordsService.convert(period.periodLastAmount),
             2,
@@ -372,24 +371,20 @@ export class ImageManipulationComponent implements OnInit {
           this.updateText('---', 5);
         }
 
-        // Update the canvas with the current date
         this.updateText(currentDateStr, 0);
         this.canvas.renderAll();
 
-        // Generate and store the data URL for each installment date
-        const dataUrl = this.canvas.toDataURL({
+        const frontDataUrl = this.canvas.toDataURL({
           format: 'png',
           quality: 1,
           multiplier: 2,
         });
 
-        // Only push non-empty data URLs
         if (currentDateStr.trim() !== '') {
-          dataUrls.push(dataUrl);
+          frontDataUrls.push(frontDataUrl);
         }
       }
 
-      // Move dateIndex to the start of the next period in periodDates
       dateIndex += period.periods;
     });
 
@@ -408,6 +403,7 @@ export class ImageManipulationComponent implements OnInit {
         objback.set('backgroundColor', this.currentTextboxBackgroundColor);
       }
     });
+
     this.canvas.renderAll();
     this.canvasBack.renderAll();
 
@@ -415,21 +411,32 @@ export class ImageManipulationComponent implements OnInit {
     const printWindow = window.open('', '_blank');
 
     if (printWindow) {
-      // Iterate through each page and add images
-      const imgTags = dataUrls
-        .map(
-          (dataUrl, index) => `
-           <div class="page" style="${
-             index < dataUrls.length - 1 ? 'page-break-after: always;' : ''
-           }">
-          <img src="${dataUrl}" style="width: 100%; height: auto;" />
-        </div>
+      const imgTags = frontDataUrls
+        .map((frontDataUrl, index) => {
+          const frontDataTag =
+            printType === 'both' || printType === 'front'
+              ? `<div class="page" style="${
+                  index < frontDataUrls.length - 1
+                    ? 'page-break-after: always;'
+                    : ''
+                }">
+                   <img src="${frontDataUrl}" style="width: 100%; height: auto;" />
+                 </div>`
+              : '';
 
-        <div class="page" >
-          <img src="${dataUrlBack}" style="width: 100%; height: auto;" />
-        </div>
-      `
-        )
+          const backDataTag =
+            printType === 'both' || printType === 'back'
+              ? `<div class="page" style="${
+                  index < frontDataUrls.length - 1
+                    ? 'page-break-after: always;'
+                    : ''
+                }">
+                   <img src="${backDataUrl}" style="width: 100%; height: auto;" />
+                 </div>`
+              : '';
+
+          return frontDataTag + backDataTag;
+        })
         .join('');
 
       // HTML and CSS for the print window
@@ -456,7 +463,7 @@ export class ImageManipulationComponent implements OnInit {
               img {
                 max-width: 100%;
                 height: auto;
-                transform: rotate(90deg); /* Rotate the image 90 degrees for print */
+                transform: rotate(90deg); /* Rotate for print */
               }
             }
           </style>
@@ -484,8 +491,10 @@ export class ImageManipulationComponent implements OnInit {
   printPreviewCanvas(
     firstChequeDate: string,
     periods: Period[],
-    contractNo: number,
-    autoMode: boolean
+    agreementNo: number,
+    autoMode: boolean,
+    printType: string, // 'both', 'front', 'back'
+    frequency: string
   ) {
     let numberOfInstallment = 0;
 
@@ -499,7 +508,8 @@ export class ImageManipulationComponent implements OnInit {
     }
     const periodDates = CommonUtils.generateDatePeriods(
       firstChequeDate,
-      numberOfInstallment
+      numberOfInstallment,
+      frequency
     );
 
     // Save original canvas properties
@@ -518,7 +528,6 @@ export class ImageManipulationComponent implements OnInit {
       }
     });
 
-    // Clear background and set transparent for printing
     objectsBack.forEach((objback) => {
       if (objback.type === 'textbox') {
         objback.set('backgroundColor', 'transparent');
@@ -532,28 +541,25 @@ export class ImageManipulationComponent implements OnInit {
     this.canvasBack.backgroundColor = 'transparent';
 
     // Array to hold data URLs for each page
-    const dataUrls: string[] = [];
+    const frontDataUrls: string[] = [];
 
-    this.updateTextBack(contractNo + '', 0);
+    this.updateTextBack(agreementNo + '', 0);
 
-    const dataUrlBack = this.canvasBack.toDataURL({
+    const backDataUrl = this.canvasBack.toDataURL({
       format: 'png',
       quality: 1,
       multiplier: 2,
     });
-    // Process each dynamic data item and apply it to the canvas
+
     let dateIndex = 0; // Start tracking index in periodDates
 
     periods.forEach((period) => {
       const periodEndIndex = dateIndex + period.periods - 1; // End index for the current period
 
-      // Loop through each installment date in the current period
       for (let i = dateIndex; i <= periodEndIndex; i++) {
         const currentDateStr = periodDates[i];
 
-        // Check if it's the first, last, or an intermediate installment in the period
         if (i === dateIndex && period.periods > 1) {
-          // First installment: Use start amount
           this.splitTextBetweenTwoObjects(
             this.amountToWordsService.convert(period.periodAmount),
             2,
@@ -562,7 +568,6 @@ export class ImageManipulationComponent implements OnInit {
           this.updateText(period.periodAmount + '/', 4);
           this.updateText('---', 5);
         } else if (i === periodEndIndex) {
-          // Last installment: Use last amount
           this.splitTextBetweenTwoObjects(
             this.amountToWordsService.convert(period.periodLastAmount),
             2,
@@ -572,24 +577,20 @@ export class ImageManipulationComponent implements OnInit {
           this.updateText('---', 5);
         }
 
-        // Update the canvas with the current date
         this.updateText(currentDateStr, 0);
         this.canvas.renderAll();
 
-        // Generate and store the data URL for each installment date
-        const dataUrl = this.canvas.toDataURL({
+        const frontDataUrl = this.canvas.toDataURL({
           format: 'png',
           quality: 1,
           multiplier: 2,
         });
 
-        // Only push non-empty data URLs
         if (currentDateStr.trim() !== '') {
-          dataUrls.push(dataUrl);
+          frontDataUrls.push(frontDataUrl);
         }
       }
 
-      // Move dateIndex to the start of the next period in periodDates
       dateIndex += period.periods;
     });
 
@@ -608,6 +609,7 @@ export class ImageManipulationComponent implements OnInit {
         objback.set('backgroundColor', this.currentTextboxBackgroundColor);
       }
     });
+
     this.canvas.renderAll();
     this.canvasBack.renderAll();
 
@@ -615,21 +617,28 @@ export class ImageManipulationComponent implements OnInit {
     const printWindow = window.open('', '_blank');
 
     if (printWindow) {
-      // Iterate through each page and add images
-      const imgTags = dataUrls
-        .map(
-          (dataUrl, index) => `
-           <div class="page" style="${
-             index < dataUrls.length - 1 ? 'page-break-after: always;' : ''
-           }">
-          <img src="${dataUrl}"  />
-        </div>
+      const imgTags = frontDataUrls
+        .map((frontDataUrl, index) => {
+          const backDataTag =
+            printType === 'both' || printType === 'back'
+              ? `<div class="page">
+                   <img src="${backDataUrl}" />
+                 </div>`
+              : '';
 
-        <div class="page" >
-          <img src="${dataUrlBack}"  />
-        </div>
-      `
-        )
+          const frontDataTag =
+            printType === 'both' || printType === 'front'
+              ? `<div class="page" style="${
+                  index < frontDataUrls.length - 1
+                    ? 'page-break-after: always;'
+                    : ''
+                }">
+                   <img src="${frontDataUrl}" />
+                 </div>`
+              : '';
+
+          return frontDataTag + backDataTag;
+        })
         .join('');
 
       // HTML and CSS for the print window
@@ -656,14 +665,14 @@ export class ImageManipulationComponent implements OnInit {
               img {
                 max-width: 100%;
                 height: auto;
-                transform: rotate(90deg); /* Rotate the image 90 degrees for print */
+                transform: rotate(90deg);
               }
             }
-               img {
-                max-width: 100%;
-                height: auto;
-                transform: rotate(90deg); /* Rotate the image 90 degrees for print */
-              }
+            img {
+              max-width: 100%;
+              height: auto;
+              transform: rotate(90deg);
+            }
           </style>
         </head>
         <body>
@@ -710,6 +719,20 @@ export class ImageManipulationComponent implements OnInit {
       } else {
         this.canvas.renderAll();
       }
+    }
+  }
+  disposeCanvas() {
+    this.canvas.dispose();
+    this.canvasBack.dispose();
+
+    const canvasElement = document.getElementById('canvas');
+    if (canvasElement) {
+      canvasElement.remove(); // Remove the canvas element from the DOM
+    }
+
+    const canvasBackElement = document.getElementById('canvasBack');
+    if (canvasBackElement) {
+      canvasBackElement.remove(); // Remove the canvas element from the DOM
     }
   }
 

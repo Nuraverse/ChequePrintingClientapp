@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SharedModule } from '../shared.module';
 import { Router } from '@angular/router';
 
@@ -9,12 +9,8 @@ import { Router } from '@angular/router';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   constructor(private router: Router) {}
-
-  ngOnInit(): void {
-    console.log('home');
-  }
 
   navigateToPrintSettings() {
     this.router.navigate(['/cheque-print-settings']);

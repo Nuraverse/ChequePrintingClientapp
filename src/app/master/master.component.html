@@ -1,4 +1,5 @@
 <p-toast></p-toast>
+<p-confirmDialog position="top"></p-confirmDialog>
 <div class="grid">
   <div class="col-12 md:col-2">
     <div class="col p-0">
@@ -96,7 +97,10 @@
           />
         </div>
 
-        <div class="flex justify-content-center align-items-center mt-3 mb-2">
+        <div
+          class="flex justify-content-center align-items-center mt-3 mb-2"
+          *ngIf="false"
+        >
           <p-button
             [text]="true"
             [raised]="true"
@@ -192,7 +196,7 @@
         style="width: 131px"
         >Bank Name:</label
       >
-      <div class="col">
+      <div class="col flex">
         <p-dropdown
           [options]="banks"
           [(ngModel)]="selectedBank"
@@ -206,6 +210,16 @@
           [style]="{ width: '300px' }"
           (onChange)="fetchCheque()"
         />
+        <div class="ml-2" style="margin-top: -4px">
+          <p-button
+            icon="pi pi-cog "
+            class="custom"
+            size="small"
+            severity="info"
+            label="Go to Cheque Print Settings"
+            (onClick)="navigateToPrintSettings()"
+          />
+        </div>
       </div>
     </div>
 
@@ -213,7 +227,7 @@
       <p-tabView>
         <p-tabPanel header="Period 1">
           <div class="grid">
-            <div class="grid col-2">
+            <div class="grid col-6 md:col-2">
               <label for="period1" class="font-bold col-fixed">Period 1</label>
               <div class="col">
                 <p-checkbox
@@ -225,7 +239,7 @@
                 />
               </div>
             </div>
-            <div class="grid col">
+            <div class="grid col-6 md:col-2">
               <label for="automode" class="font-bold col-fixed"
                 >Auto Mode</label
               >
@@ -238,6 +252,17 @@
                 />
               </div>
             </div>
+            <div class="grid col flex justify-content-start">
+              <label for="automode" class="font-bold col-fixed"
+                >Print Options</label
+              >
+              <p-selectButton
+                [options]="printOptions"
+                [(ngModel)]="printValue"
+                optionLabel="label"
+                optionValue="value"
+              />
+            </div>
           </div>
 
           <div class="border-1 border-round p-2">
@@ -248,7 +273,7 @@
               <div class="">
                 <p-inputNumber
                   inputId="conractNo"
-                  [(ngModel)]="contractNo"
+                  [(ngModel)]="agreementNo"
                   [style]="{ width: '300px' }"
                   [disabled]="!period1Checked || selectedBank == null"
                   [useGrouping]="false"
@@ -263,8 +288,8 @@
                 class="ml-3 mt-1"
                 [disabled]="
                   !period1Checked ||
-                  contractNo == undefined ||
-                  contractNo == 0 ||
+                  agreementNo == undefined ||
+                  agreementNo == 0 ||
                   !autoMode ||
                   selectedBank == null
                 "
@@ -291,8 +316,8 @@
                       [disabled]="
                         !period1Checked ||
                         autoMode ||
-                        contractNo == null ||
-                        contractNo == undefined
+                        agreementNo == null ||
+                        agreementNo == undefined
                       "
                       (onBlur)="calculateLastPeriodDate()"
                     />
@@ -315,8 +340,8 @@
                       [disabled]="
                         !period1Checked ||
                         autoMode ||
-                        contractNo == null ||
-                        contractNo == undefined
+                        agreementNo == null ||
+                        agreementNo == undefined
                       "
                       min="0"
                     />
@@ -363,8 +388,8 @@
                       [disabled]="
                         !period1Checked ||
                         autoMode ||
-                        contractNo == null ||
-                        contractNo == undefined
+                        agreementNo == null ||
+                        agreementNo == undefined
                       "
                       min="0"
                     />
@@ -374,28 +399,57 @@
             </div>
 
             <div class="grid col p-0">
-              <label
-                for="period1Periods"
-                class="font-bold col-fixed"
-                style="width: 200px"
-                >Period:</label
-              >
-              <div class="col">
-                <p-inputNumber
-                  inputId="period1Periods"
-                  [showButtons]="true"
-                  min="1"
-                  max="84"
-                  [style]="{ width: '300px' }"
-                  [(ngModel)]="period1Periods"
-                  [disabled]="
-                    !period1Checked ||
-                    autoMode ||
-                    contractNo == null ||
-                    contractNo == undefined
-                  "
-                  (onBlur)="calculateLastPeriodDate()"
-                />
+              <div class="col-12 md:col-6">
+                <div class="grid col p-0">
+                  <label
+                    for="period1Periods"
+                    class="font-bold col-fixed"
+                    style="width: 200px"
+                    >Period:</label
+                  >
+                  <div class="col">
+                    <p-inputNumber
+                      inputId="period1Periods"
+                      [showButtons]="true"
+                      min="1"
+                      [style]="{ width: '300px' }"
+                      [(ngModel)]="period1Periods"
+                      [disabled]="
+                        !period1Checked ||
+                        autoMode ||
+                        agreementNo == null ||
+                        agreementNo == undefined
+                      "
+                      (onBlur)="calculateLastPeriodDate()"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="grid col p-0">
+                  <label
+                    for="frequency"
+                    class="font-bold col-fixed"
+                    style="width: 200px"
+                    >Frequency:</label
+                  >
+                  <div class="col">
+                    <p-dropdown
+                      [options]="frequencyOptions"
+                      [(ngModel)]="selectedFrequency"
+                      optionLabel="label"
+                      placeholder="Frequency"
+                      inputId="frequency"
+                      [disabled]="
+                        !period1Checked ||
+                        autoMode ||
+                        agreementNo == null ||
+                        agreementNo == undefined
+                      "
+                      [style]="{ width: '300px' }"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -516,7 +570,6 @@
                     [showButtons]="true"
                     inputStyle="254px"
                     min="1"
-                    max="100"
                     [inputStyle]="{ width: '254px' }"
                     [(ngModel)]="period2Periods"
                     [disabled]="!period2Checked"
@@ -644,7 +697,6 @@
                     [showButtons]="true"
                     inputStyle="254px"
                     min="1"
-                    max="100"
                     [inputStyle]="{ width: '254px' }"
                     [(ngModel)]="period3Periods"
                     [disabled]="!period3Checked"
@@ -772,7 +824,6 @@
                     [showButtons]="true"
                     inputStyle="254px"
                     min="1"
-                    max="100"
                     [inputStyle]="{ width: '254px' }"
                     [(ngModel)]="period4Periods"
                     [disabled]="!period4Checked"
@@ -849,8 +900,8 @@
               period1Amount === null ||
               period1LastAmount === 0 ||
               period1LastAmount === null ||
-              contractNo == null ||
-              contractNo == undefined
+              agreementNo == null ||
+              agreementNo == undefined
             "
           >
             <div class="flex flex-column align-items-center">
@@ -872,8 +923,8 @@
               period1LastAmount === 0 ||
               period1LastAmount === null ||
               !viewDataFlag ||
-              contractNo == null ||
-              contractNo == undefined
+              agreementNo == null ||
+              agreementNo == undefined
             "
             (onClick)="printPreviewCanvas()"
           >
@@ -896,8 +947,8 @@
               period1LastAmount === 0 ||
               period1LastAmount === null ||
               !viewDataFlag ||
-              contractNo == null ||
-              contractNo == undefined
+              agreementNo == null ||
+              agreementNo == undefined
             "
             (onClick)="printCanvas()"
           >

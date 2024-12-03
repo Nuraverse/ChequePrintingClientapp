@@ -28,17 +28,23 @@ export interface Bank {
   bankName: string;
 }
 
+export interface Frequency {
+  value: string;
+  label: string;
+}
+
 export interface FileUploadResponse {
   fileName: string;
   filePath: string;
 }
 
-export interface Contract {
-  id: number;
+export interface Agreement {
+  agreementNo: number;
   contractId: string;
-  periodStartDate: string;
-  periodStartAmount: number;
-  periodEndDate: string;
-  periodEndAmount: number;
+  firstInstallmentDate: string;
+  firstInstallmentAmount: number;
+  lastInstallmentDate: string;
+  lastInstallmentAmount: number;
   numberOfInstallment: number;
+  frequency: string;
 }

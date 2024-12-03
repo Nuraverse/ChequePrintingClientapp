@@ -20,7 +20,8 @@ import { ToastModule } from 'primeng/toast'; // Import ToastModule;
 import { MessageService } from 'primeng/api'; // Import MessageService;
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
-import { ContractService } from './service/contract/contract-service.service';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { AgreemrntService } from './service/contract/contract-service.service';
 
 @NgModule({
   declarations: [ImageManipulationComponent],
@@ -42,6 +43,7 @@ import { ContractService } from './service/contract/contract-service.service';
     FileUploadModule,
     ToastModule,
     ConfirmDialogModule,
+    SelectButtonModule,
   ],
   exports: [
     ImageModule,
@@ -61,13 +63,14 @@ import { ContractService } from './service/contract/contract-service.service';
     CommonModule,
     ToastModule,
     ConfirmDialogModule,
+    SelectButtonModule,
   ],
   providers: [
     provideHttpClient(),
     ChequeService,
     MessageService,
     ConfirmationService,
-    ContractService,
+    AgreemrntService,
   ],
 })
 export class SharedModule {}

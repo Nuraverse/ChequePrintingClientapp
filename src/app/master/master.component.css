@@ -115,3 +115,31 @@
 :host ::ng-deep .custom-image-width {
   width: 230px !important;
 }
+
+:host ::ng-deep .p-selectbutton .p-button {
+  background: #f1f5f9;
+  border: 1px solid #f1f5f9;
+  color: #64748b;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s,
+    box-shadow 0.2s, outline-color 0.2s;
+}
+
+:host ::ng-deep .p-selectbutton .p-button.p-highlight {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+:host ::ng-deep .p-selectbutton .p-button:not(.p-disabled):not(.p-highlight):hover {
+  background: #fce3f5;
+  border-color: #fce3f5;
+  color: #4b5563;
+}
+:host ::ng-deep .p-selectbutton .p-button.p-highlight:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+:host ::ng-deep .custom .p-button.p-button-sm .p-button-icon {
+  font-size: 1.5rem;
+}

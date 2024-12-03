@@ -1,5 +1,5 @@
 <p-toast></p-toast>
-<p-confirmDialog></p-confirmDialog>
+<p-confirmDialog position="top"></p-confirmDialog>
 <div class="grid p-3 pb-2">
   <div class="grid flex col-12 p-0">
     <div class="col-2 py-0">
@@ -391,6 +391,17 @@
                     <span class="text-sm mt-1">Cancel</span>
                   </div></p-button
                 >
+
+                <p-button
+                  severity="info"
+                  [text]="true"
+                  [raised]="true"
+                  (onClick)="navigateToPrintMaster()"
+                  ><div class="flex flex-column align-items-center">
+                    <i class="pi pi-print text-4xl"></i>
+                    <span class="text-sm mt-1"> Go to Print</span>
+                  </div></p-button
+                >
               </div>
             </div>
           </div>
@@ -489,6 +500,7 @@
 
             <div
               class="flex justify-content-center align-items-center mt-3 mb-2"
+              *ngIf="false"
             >
               <p-button
                 [text]="true"
@@ -553,6 +565,17 @@
               <div class="flex flex-column align-items-center">
                 <img src="icon/cancel-cheque.png" alt="icon" />
                 <span class="text-sm mt-1">Cancel</span>
+              </div></p-button
+            >
+
+            <p-button
+              severity="info"
+              [text]="true"
+              [raised]="true"
+              (onClick)="navigateToPrintMaster()"
+              ><div class="flex flex-column align-items-center">
+                <i class="pi pi-print text-4xl"></i>
+                <span class="text-sm mt-1"> Go to Print</span>
               </div></p-button
             >
           </ng-container>
