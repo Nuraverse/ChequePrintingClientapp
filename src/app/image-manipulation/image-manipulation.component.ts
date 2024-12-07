@@ -341,7 +341,7 @@ export class ImageManipulationComponent implements OnInit {
     const backDataUrl = this.canvasBack.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 2,
+      multiplier: 1,
     });
 
     // Process each dynamic data item and apply it to the canvas
@@ -377,7 +377,7 @@ export class ImageManipulationComponent implements OnInit {
         const frontDataUrl = this.canvas.toDataURL({
           format: 'png',
           quality: 1,
-          multiplier: 2,
+          multiplier: 1,
         });
 
         if (currentDateStr.trim() !== '') {
@@ -548,7 +548,7 @@ export class ImageManipulationComponent implements OnInit {
     const backDataUrl = this.canvasBack.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 2,
+      multiplier: 1,
     });
 
     let dateIndex = 0; // Start tracking index in periodDates
@@ -583,7 +583,7 @@ export class ImageManipulationComponent implements OnInit {
         const frontDataUrl = this.canvas.toDataURL({
           format: 'png',
           quality: 1,
-          multiplier: 2,
+          multiplier: 1,
         });
 
         if (currentDateStr.trim() !== '') {
