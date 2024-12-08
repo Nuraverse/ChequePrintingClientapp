@@ -57,9 +57,9 @@ export class MasterComponent implements OnInit {
   viewDataFlag = false;
   isTextNavigation = false;
   printOptions = [
-    { label: 'Both', value: 'both' },
     { label: 'Front', value: 'front' },
     { label: 'Back', value: 'back' },
+    { label: 'Both', value: 'both' },
   ];
 
   frequencyOptions: Frequency[] = [
@@ -70,7 +70,7 @@ export class MasterComponent implements OnInit {
     { label: 'Annually', value: 'A' },
   ];
 
-  printValue = 'both';
+  printValue = 'front';
   selectedFrequency: Frequency = { label: 'Monthly', value: 'M' };
 
   @ViewChild(ImageManipulationComponent)
@@ -250,7 +250,11 @@ export class MasterComponent implements OnInit {
         message:
           'Are you sure you want to print the cheques on <b style="font-size: 18px;">' +
           this.printValue +
-          ' side? </b>',
+          ' side ' +
+          (this.printValue == 'front' || this.printValue == 'back'
+            ? 'only'
+            : '') +
+          ' ? </b>',
         header: 'Confirmation',
         icon: 'pi pi-exclamation-triangle',
         acceptButtonStyleClass: 'p-button-success ml-2',
