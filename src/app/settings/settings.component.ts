@@ -34,6 +34,7 @@ export class SettingsComponent implements OnInit {
   imageURL = '';
   uploadFileFlag = false;
   isTextNavigation = false;
+  printStartPosition = 29.0;
 
   @ViewChild(ImageManipulationComponent)
   imageComponent!: ImageManipulationComponent;
@@ -156,6 +157,7 @@ export class SettingsComponent implements OnInit {
           this.selectedBankName = cheque.bankName;
           this.chequeWidth = cheque.chequeWidth;
           this.chequeHeight = cheque.chequeHeight;
+          this.printStartPosition = cheque.printStartPosition;
           if (this.imageComponent) {
             this.imageComponent.resizeAndLoadCanvas(cheque);
           }
@@ -251,6 +253,7 @@ export class SettingsComponent implements OnInit {
         chequePath: this.savedCheque.chequePath,
         chequeWidth: this.chequeWidth,
         chequeHeight: this.chequeHeight,
+        printStartPosition: this.printStartPosition,
         canvasWidth: Math.round(this.cmToPixels(this.chequeWidth)),
         canvasHeight: Math.round(this.cmToPixels(this.chequeHeight)),
         chequeConfigFront: this.imageComponent.exportJSON(),
@@ -298,6 +301,7 @@ export class SettingsComponent implements OnInit {
         createdUserId: 0,
         createdBy: 'system',
         createdDate: new Date(),
+        printStartPosition: this.printStartPosition,
       };
 
       this.chequeService.createCheque(cheque).subscribe({
@@ -422,10 +426,17 @@ export class SettingsComponent implements OnInit {
       this.isTextNavigation = false;
     }
   }
+
   navigateToPrintMaster() {
     if (this.imageComponent) {
       this.imageComponent.disposeCanvas();
     }
     this.router.navigate(['/cheque-printing']);
+  }
+
+  printSettingsCanvas() {
+    if (this.imageComponent) {
+      this.imageComponent.printSettingsCanvas(this.printStartPosition);
+    }
   }
 }

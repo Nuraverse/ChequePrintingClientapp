@@ -21,7 +21,7 @@
                 <label
                   for="path"
                   class="font-bold col-fixed"
-                  style="width: 80px"
+                  style="width: 170px"
                   >Path:</label
                 >
                 <div class="col">
@@ -38,7 +38,7 @@
                 <label
                   for="path"
                   class="font-bold col-fixed"
-                  style="width: 80px"
+                  style="width: 170px"
                   >Name:</label
                 >
                 <div class="col">
@@ -54,7 +54,7 @@
                 <label
                   for="path"
                   class="font-bold col-fixed"
-                  style="width: 80px"
+                  style="width: 170px"
                   >Size:</label
                 >
                 <div class="col flex">
@@ -113,6 +113,26 @@
                   </div>
                 </div>
               </div>
+              <div class="field grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 170px"
+                  >Print Start Position:</label
+                >
+                <div class="col">
+                  <p-inputGroup [style]="{ width: '300px' }">
+                    <p-inputNumber
+                      inputId="minmaxfraction"
+                      mode="decimal"
+                      [minFractionDigits]="2"
+                      [maxFractionDigits]="5"
+                      [(ngModel)]="printStartPosition"
+                    />
+                    <p-inputGroupAddon>%</p-inputGroupAddon>
+                  </p-inputGroup>
+                </div>
+              </div>
             </div>
             <div class="col flex">
               <p-fileUpload
@@ -144,7 +164,7 @@
                 <label
                   for="bankName"
                   class="font-bold col-fixed"
-                  style="width: 80px"
+                  style="width: 170px"
                   >Bank:</label
                 >
                 <div class="col">
@@ -167,7 +187,7 @@
                 <label
                   for="path"
                   class="font-bold col-fixed"
-                  style="width: 80px"
+                  style="width: 170px"
                   >Name:</label
                 >
                 <div class="col">
@@ -184,7 +204,7 @@
                 <label
                   for="path"
                   class="font-bold col-fixed"
-                  style="width: 80px"
+                  style="width: 170px"
                   >Size:</label
                 >
                 <div class="col flex">
@@ -243,6 +263,26 @@
                   </div>
                 </div>
               </div>
+              <div class="field grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 170px"
+                  >Print Start Position:</label
+                >
+                <div class="col">
+                  <p-inputGroup [style]="{ width: '300px' }">
+                    <p-inputNumber
+                      inputId="minmaxfraction"
+                      mode="decimal"
+                      [minFractionDigits]="2"
+                      [maxFractionDigits]="5"
+                      [(ngModel)]="printStartPosition"
+                    />
+                    <p-inputGroupAddon>%</p-inputGroupAddon>
+                  </p-inputGroup>
+                </div>
+              </div>
             </div>
             <div class="col flex">
               <p-fileUpload
@@ -270,12 +310,12 @@
         </p-tabPanel>
         <p-tabPanel header="Delete">
           <div class="flex border-1 border-round">
-            <div class="col-fixed" style="width: 470px">
+            <div class="col-fixed">
               <div class="field grid">
                 <label
                   for="path"
                   class="font-bold col-fixed"
-                  style="width: 80px"
+                  style="width: 170px"
                   >Bank:</label
                 >
                 <div class="col">
@@ -298,7 +338,7 @@
                 <label
                   for="path"
                   class="font-bold col-fixed"
-                  style="width: 80px"
+                  style="width: 170px"
                   >Name:</label
                 >
                 <div class="col">
@@ -315,7 +355,7 @@
                 <label
                   for="path"
                   class="font-bold col-fixed"
-                  style="width: 80px"
+                  style="width: 170px"
                   >Size:</label
                 >
                 <div class="col">
@@ -344,7 +384,7 @@
                     <label
                       for="path"
                       class="font-bold col-fixed"
-                      style="width: 80px"
+                      style="width: 170px"
                       >Height:</label
                     >
                     <div class="col">
@@ -361,6 +401,27 @@
                       </p-inputGroup>
                     </div>
                   </div>
+                </div>
+              </div>
+              <div class="field grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 170px"
+                  >Print Start Position:</label
+                >
+                <div class="col">
+                  <p-inputGroup [style]="{ width: '300px' }">
+                    <p-inputNumber
+                      inputId="minmaxfraction"
+                      mode="decimal"
+                      [minFractionDigits]="2"
+                      [maxFractionDigits]="5"
+                      [(ngModel)]="printStartPosition"
+                      [disabled]="true"
+                    />
+                    <p-inputGroupAddon>%</p-inputGroupAddon>
+                  </p-inputGroup>
                 </div>
               </div>
             </div>
@@ -567,6 +628,18 @@
                 <span class="text-sm mt-1">Cancel</span>
               </div></p-button
             >
+
+            <p-button
+              [text]="true"
+              [raised]="true"
+              class="mr-2"
+              (onClick)="printSettingsCanvas()"
+            >
+              <div class="flex flex-column align-items-center">
+                <i class="pi pi-print text-4xl"></i>
+                <span class="text-sm mt-1">Print</span>
+              </div>
+            </p-button>
 
             <p-button
               severity="info"

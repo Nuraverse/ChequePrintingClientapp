@@ -21,6 +21,7 @@ export interface Cheque {
   updatedUserId?: number;
   updatedBy?: string;
   updatedDate?: Date;
+  printStartPosition: number;
 }
 
 export interface Bank {

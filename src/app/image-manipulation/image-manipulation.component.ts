@@ -81,27 +81,29 @@ export class ImageManipulationComponent implements OnInit {
     this.canvas.renderAll();
     this.canvasBack.renderAll();
 
-    fabric.FabricImage.fromURL(imageURL).then((img) => {
-      // Calculate scale ratios
-      const widthRatio = this.canvas.width / img.width;
-      const heightRatio = this.canvas.height / img.height;
+    fabric.FabricImage.fromURL(imageURL, { crossOrigin: 'anonymous' }).then(
+      (img) => {
+        // Calculate scale ratios
+        const widthRatio = this.canvas.width / img.width;
+        const heightRatio = this.canvas.height / img.height;
 
-      // Use the smaller ratio to maintain aspect ratio
-      const scale = Math.min(widthRatio, heightRatio);
+        // Use the smaller ratio to maintain aspect ratio
+        const scale = Math.min(widthRatio, heightRatio);
 
-      // Scale the image
-      img.scale(scale);
+        // Scale the image
+        img.scale(scale);
 
-      // Center the image
-      img.set({
-        left: (this.canvas.width - img.width * scale) / 2,
-        top: (this.canvas.height - img.height * scale) / 2,
-      });
+        // Center the image
+        img.set({
+          left: (this.canvas.width - img.width * scale) / 2,
+          top: (this.canvas.height - img.height * scale) / 2,
+        });
 
-      this.canvas.backgroundImage = img;
-      this.canvas.renderAll();
-      this.canvasBack.renderAll();
-    });
+        this.canvas.backgroundImage = img;
+        this.canvas.renderAll();
+        this.canvasBack.renderAll();
+      }
+    );
   }
 
   resizeBackgroundImage(canvasWidth: number, canvasHeight: number) {
@@ -287,7 +289,8 @@ export class ImageManipulationComponent implements OnInit {
     agreementNo: number,
     autoMode: boolean,
     printType: string, // 'both', 'front', 'back'
-    frequency: string
+    frequency: string,
+    printStartPosition: number
   ) {
     let numberOfInstallment = 0;
 
@@ -341,7 +344,7 @@ export class ImageManipulationComponent implements OnInit {
     const backDataUrl = this.canvasBack.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 1,
+      multiplier: 2,
     });
 
     // Process each dynamic data item and apply it to the canvas
@@ -377,7 +380,7 @@ export class ImageManipulationComponent implements OnInit {
         const frontDataUrl = this.canvas.toDataURL({
           format: 'png',
           quality: 1,
-          multiplier: 1,
+          multiplier: 2,
         });
 
         if (currentDateStr.trim() !== '') {
@@ -454,16 +457,98 @@ export class ImageManipulationComponent implements OnInit {
               background-color: white;
             }
             .page {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              height: 100vh;
+              position: relative;
+              width: 100%;
+              height: 100%;
+              overflow: hidden; /* Prevent overflow */            
             }
+          
             @media print {
               img {
-                max-width: 100%;
-                height: auto;
-                transform: rotate(90deg); /* Rotate for print */
+                width: 100%;  /* Ensure the image fits the width of the page */
+                height: auto;  /* Maintain aspect ratio */
+                transform: rotate(90deg);  /* Rotate the image 90 degrees */
+                top: 0;  /* Position it at the top of the page */
+                left: 0;  /* Position it at the left of the page */
+                margin-top: ${printStartPosition}%;               
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${imgTags}
+        </body>
+        </html>
+      `);
+
+      printWindow.document.close();
+      printWindow.onload = () => {
+        setTimeout(() => {
+          printWindow.print();
+          printWindow.close();
+        }, 500);
+      };
+    } else {
+      console.error(
+        'Failed to open print window. Please check your browser settings.'
+      );
+    }
+  }
+
+  printSettingsCanvas(printStartPosition: number) {
+    // Array to hold data URLs for each page
+    const frontImageUrl = this.canvas.toDataURL({
+      format: 'png',
+      quality: 1,
+      multiplier: 2,
+    });
+
+    const backImageUrl = this.canvasBack.toDataURL({
+      format: 'png',
+      quality: 1,
+      multiplier: 2,
+    });
+    const frontImage = `<div class="page" >
+    <img src="${frontImageUrl}" style="width: 100%; height: auto;" />
+  </div>`;
+    const backImage = `<div class="page" >
+            <img src="${backImageUrl}" style="width: 100%; height: auto;" />
+          </div>`;
+
+    const imgTags = frontImage + backImage;
+    // Build the print document
+    const printWindow = window.open('', '_blank');
+
+    if (printWindow) {
+      // HTML and CSS for the print window
+      printWindow.document.write(`
+        <html>
+        <head>
+          <title>Print</title>
+          <style>
+            @page {
+              size: A4 portrait;
+              margin: 0;
+            }
+            body {
+              margin: 0;
+              background-color: white;
+            }
+            .page {
+              position: relative;
+              width: 100%;
+              height: 100%;
+              overflow: hidden; /* Prevent overflow */
+            }
+          
+            @media print {
+              img {
+                width: 100%;  /* Ensure the image fits the width of the page */
+                height: auto;  /* Maintain aspect ratio */
+                transform: rotate(90deg);  /* Rotate the image 90 degrees */
+                top: 0;  /* Position it at the top of the page */
+                left: 0;  /* Position it at the left of the page */
+                margin-top: ${printStartPosition}%;               
               }
             }
           </style>
@@ -534,11 +619,11 @@ export class ImageManipulationComponent implements OnInit {
       }
     });
 
-    this.canvas.backgroundImage = undefined; // Clear the background image
+    /* this.canvas.backgroundImage = undefined; // Clear the background image
     this.canvas.backgroundColor = 'transparent';
 
     this.canvasBack.backgroundImage = undefined; // Clear the background image
-    this.canvasBack.backgroundColor = 'transparent';
+    this.canvasBack.backgroundColor = 'transparent';*/
 
     // Array to hold data URLs for each page
     const frontDataUrls: string[] = [];
@@ -548,7 +633,7 @@ export class ImageManipulationComponent implements OnInit {
     const backDataUrl = this.canvasBack.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 1,
+      multiplier: 2,
     });
 
     let dateIndex = 0; // Start tracking index in periodDates
@@ -583,7 +668,7 @@ export class ImageManipulationComponent implements OnInit {
         const frontDataUrl = this.canvas.toDataURL({
           format: 'png',
           quality: 1,
-          multiplier: 1,
+          multiplier: 2,
         });
 
         if (currentDateStr.trim() !== '') {
@@ -656,22 +741,21 @@ export class ImageManipulationComponent implements OnInit {
               background-color: white;
             }
             .page {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              height: 100vh;
+              position: relative;
+              width: 100%;
+              height: 100%;
+              overflow: hidden; /* Prevent overflow */
             }
+          
             @media print {
               img {
-                max-width: 100%;
-                height: auto;
-                transform: rotate(90deg);
+                width: 100%;  /* Ensure the image fits the width of the page */
+                height: auto;  /* Maintain aspect ratio */
+                transform: rotate(90deg);  /* Rotate the image 90 degrees */
+                top: 0;  /* Position it at the top of the page */
+                left: 0;  /* Position it at the left of the page */
+                margin-top: 29.0%;               
               }
-            }
-            img {
-              max-width: 100%;
-              height: auto;
-              transform: rotate(90deg);
             }
           </style>
         </head>
@@ -680,7 +764,6 @@ export class ImageManipulationComponent implements OnInit {
         </body>
         </html>
       `);
-
       printWindow.document.close();
       printWindow.onload = () => {};
     } else {
@@ -763,25 +846,27 @@ export class ImageManipulationComponent implements OnInit {
   setBackgroundImage() {
     const imgUrl = prompt('Enter the URL of the background image:');
     if (imgUrl) {
-      fabric.FabricImage.fromURL(imgUrl).then((img) => {
-        // Calculate scale ratios
-        const widthRatio = this.canvas.width / img.width;
-        const heightRatio = this.canvas.height / img.height;
+      fabric.FabricImage.fromURL(imgUrl, { crossOrigin: 'anonymous' }).then(
+        (img) => {
+          // Calculate scale ratios
+          const widthRatio = this.canvas.width / img.width;
+          const heightRatio = this.canvas.height / img.height;
 
-        // Use the smaller ratio to maintain aspect ratio
-        const scale = Math.min(widthRatio, heightRatio);
+          // Use the smaller ratio to maintain aspect ratio
+          const scale = Math.min(widthRatio, heightRatio);
 
-        // Scale the image
-        img.scale(scale);
+          // Scale the image
+          img.scale(scale);
 
-        // Center the image
-        img.set({
-          left: (this.canvas.width - img.width * scale) / 2,
-          top: (this.canvas.height - img.height * scale) / 2,
-        });
-        this.canvas.backgroundImage = img; // Use the new property directly
-        this.canvas.renderAll(); // Render the canvas
-      });
+          // Center the image
+          img.set({
+            left: (this.canvas.width - img.width * scale) / 2,
+            top: (this.canvas.height - img.height * scale) / 2,
+          });
+          this.canvas.backgroundImage = img; // Use the new property directly
+          this.canvas.renderAll(); // Render the canvas
+        }
+      );
     }
   }
 

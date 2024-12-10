@@ -50,12 +50,13 @@ export class MasterComponent implements OnInit {
   period4LastAmount = 0;
   period4Periods = 1;
   amountDisplay = '';
-  agreementNo!: number | null;
+  agreementNo: number | null = 12345678;
   selectedChequeObject!: Cheque;
   autoMode = true;
   agreementInfo!: Agreement;
   viewDataFlag = false;
   isTextNavigation = false;
+  printStartPosition = 0;
   printOptions = [
     { label: 'Front', value: 'front' },
     { label: 'Back', value: 'back' },
@@ -103,7 +104,7 @@ export class MasterComponent implements OnInit {
     });
   }
 
-  fetchContract(): void {
+  fetchAgreement(): void {
     if (this.agreementNo) {
       this.viewDataFlag = false;
       this.agreementService.getAgreement(this.agreementNo).subscribe({
@@ -271,7 +272,8 @@ export class MasterComponent implements OnInit {
               this.agreementNo,
               this.autoMode,
               this.printValue,
-              this.selectedFrequency?.value
+              this.selectedFrequency?.value,
+              this.selectedChequeObject.printStartPosition
             );
           }
         },
