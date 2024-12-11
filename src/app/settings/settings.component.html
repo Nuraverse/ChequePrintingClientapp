@@ -431,7 +431,7 @@
                   [text]="true"
                   [raised]="true"
                   class="mr-2"
-                  severity="info"
+                  severity="success"
                   (onClick)="deleteCheque()"
                 >
                   <div class="flex flex-column align-items-center">
@@ -444,7 +444,7 @@
                   [text]="true"
                   [raised]="true"
                   class="mr-2"
-                  severity="info"
+                  severity="danger"
                   (onClick)="clear()"
                 >
                   <div class="flex flex-column align-items-center">
@@ -454,12 +454,12 @@
                 >
 
                 <p-button
-                  severity="info"
+                  severity="warning"
                   [text]="true"
                   [raised]="true"
                   (onClick)="navigateToPrintMaster()"
                   ><div class="flex flex-column align-items-center">
-                    <i class="pi pi-print text-4xl"></i>
+                    <i class="pi pi-arrow-circle-left text-4xl"></i>
                     <span class="text-sm mt-1"> Go to Print</span>
                   </div></p-button
                 >
@@ -607,8 +607,9 @@
               [text]="true"
               [raised]="true"
               class="mr-2"
-              severity="info"
+              severity="success"
               (onClick)="saveOrUpdateCheque()"
+              [disabled]="!this.fileUploadResponse && !this.savedCheque"
             >
               <div class="flex flex-column align-items-center">
                 <img src="icon/save-cheque.png" alt="icon" />
@@ -620,7 +621,7 @@
               [text]="true"
               [raised]="true"
               class="mr-2"
-              severity="info"
+              severity="danger"
               (onClick)="clear()"
             >
               <div class="flex flex-column align-items-center">
@@ -642,12 +643,12 @@
             </p-button>
 
             <p-button
-              severity="info"
+              severity="warning"
               [text]="true"
               [raised]="true"
               (onClick)="navigateToPrintMaster()"
               ><div class="flex flex-column align-items-center">
-                <i class="pi pi-print text-4xl"></i>
+                <i class="pi pi-arrow-circle-left text-4xl"></i>
                 <span class="text-sm mt-1"> Go to Print</span>
               </div></p-button
             >

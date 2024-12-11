@@ -50,7 +50,7 @@ export class MasterComponent implements OnInit {
   period4LastAmount = 0;
   period4Periods = 1;
   amountDisplay = '';
-  agreementNo: number | null = 12345678;
+  agreementNo!: number | null;
   selectedChequeObject!: Cheque;
   autoMode = true;
   agreementInfo!: Agreement;
@@ -218,6 +218,7 @@ export class MasterComponent implements OnInit {
     this.viewDataFlag = false;
     this.imageComponent.resetCanvas();
   }
+
   resetCanvas() {
     if (this.imageComponent) {
       this.selectedBank = null;
@@ -382,97 +383,6 @@ export class MasterComponent implements OnInit {
     }
   }
 
-  viewData1() {
-    if (this.imageComponent) {
-      this.amountDisplay = 'Total ';
-      let totalAmount = 0;
-
-      this.amountInWords1 = this.amountToWordsService.convert(
-        this.period1Periods == 1 ? this.period1LastAmount : this.period1Amount
-      );
-      const formattedDate = moment(this.firstChequeDate).format('DD-MM-YYYY');
-      this.imageComponent.updateText(formattedDate, 0);
-      this.imageComponent.splitTextBetweenTwoObjects(this.amountInWords1, 2, 3);
-      this.imageComponent.updateText(
-        (this.period1Periods == 1
-          ? this.period1LastAmount
-          : this.period1Amount) + '/',
-        4
-      );
-      this.imageComponent.updateText('---', 5);
-      if (this.period1Checked) {
-        this.amountDisplay +=
-          this.period1Amount != 0
-            ? this.period1Amount +
-              ' X ' +
-              (this.period1Periods - 1) +
-              ' + ' +
-              this.period1LastAmount
-            : '';
-        totalAmount +=
-          this.period1Amount * (this.period1Periods - 1) +
-          this.period1LastAmount;
-      }
-      if (this.period2Checked) {
-        this.amountDisplay +=
-          this.period2Amount != 0
-            ? ' & ' +
-              this.period2Amount +
-              ' X ' +
-              (this.period2Periods - 1) +
-              ' + ' +
-              this.period2LastAmount
-            : '';
-        totalAmount +=
-          this.period2Amount * (this.period2Periods - 1) +
-          this.period2LastAmount;
-      }
-
-      if (this.period3Checked) {
-        this.amountDisplay +=
-          this.period3Amount != 0
-            ? ' & ' +
-              this.period3Amount +
-              ' X ' +
-              (this.period3Periods - 1) +
-              ' + ' +
-              this.period3LastAmount
-            : '';
-        totalAmount +=
-          this.period3Amount * (this.period3Periods - 1) +
-          this.period3LastAmount;
-      }
-      if (this.period4Checked) {
-        this.amountDisplay +=
-          this.period4Amount != 0
-            ? ' & ' +
-              this.period4Amount +
-              ' X ' +
-              (this.period4Periods - 1) +
-              ' + ' +
-              this.period4LastAmount
-            : '';
-        totalAmount +=
-          this.period4Amount * (this.period4Periods - 1) +
-          this.period4LastAmount;
-      }
-
-      this.amountDisplay += ' => ' + totalAmount;
-
-      if (this.agreementNo != 0) {
-        this.imageComponent.updateTextBack(this.agreementNo + '', 0);
-      }
-      this.showBackgroundColor = false;
-      this.toggleBackgroundColor();
-      this.viewDataFlag = true;
-      this.messageService.add({
-        severity: 'success',
-        summary: 'success',
-        detail: 'The view has been applied successfully!',
-      });
-    }
-  }
-
   viewData() {
     if (this.imageComponent) {
       this.amountDisplay = '';
@@ -578,6 +488,7 @@ export class MasterComponent implements OnInit {
       this.imageComponent.exportJSON();
     }
   }
+
   onAutoMode() {
     if (this.autoMode) {
       this.period2Checked = false;
@@ -655,6 +566,7 @@ export class MasterComponent implements OnInit {
       }
     }
   }
+
   onTextObjectSelection(obj: any) {
     if (obj) {
       this.isTextNavigation = true;

@@ -344,7 +344,7 @@ export class ImageManipulationComponent implements OnInit {
     const backDataUrl = this.canvasBack.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 2,
+      multiplier: 3,
     });
 
     // Process each dynamic data item and apply it to the canvas
@@ -380,7 +380,7 @@ export class ImageManipulationComponent implements OnInit {
         const frontDataUrl = this.canvas.toDataURL({
           format: 'png',
           quality: 1,
-          multiplier: 2,
+          multiplier: 3,
         });
 
         if (currentDateStr.trim() !== '') {
@@ -500,13 +500,13 @@ export class ImageManipulationComponent implements OnInit {
     const frontImageUrl = this.canvas.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 2,
+      multiplier: 3,
     });
 
     const backImageUrl = this.canvasBack.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 2,
+      multiplier: 3,
     });
     const frontImage = `<div class="page" >
     <img src="${frontImageUrl}" style="width: 100%; height: auto;" />
@@ -619,11 +619,11 @@ export class ImageManipulationComponent implements OnInit {
       }
     });
 
-    /* this.canvas.backgroundImage = undefined; // Clear the background image
+    this.canvas.backgroundImage = undefined; // Clear the background image
     this.canvas.backgroundColor = 'transparent';
 
     this.canvasBack.backgroundImage = undefined; // Clear the background image
-    this.canvasBack.backgroundColor = 'transparent';*/
+    this.canvasBack.backgroundColor = 'transparent';
 
     // Array to hold data URLs for each page
     const frontDataUrls: string[] = [];
@@ -633,7 +633,7 @@ export class ImageManipulationComponent implements OnInit {
     const backDataUrl = this.canvasBack.toDataURL({
       format: 'png',
       quality: 1,
-      multiplier: 2,
+      multiplier: 3,
     });
 
     let dateIndex = 0; // Start tracking index in periodDates
@@ -668,7 +668,7 @@ export class ImageManipulationComponent implements OnInit {
         const frontDataUrl = this.canvas.toDataURL({
           format: 'png',
           quality: 1,
-          multiplier: 2,
+          multiplier: 3,
         });
 
         if (currentDateStr.trim() !== '') {
@@ -804,6 +804,7 @@ export class ImageManipulationComponent implements OnInit {
       }
     }
   }
+
   disposeCanvas() {
     this.canvas.dispose();
     this.canvasBack.dispose();

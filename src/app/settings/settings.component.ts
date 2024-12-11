@@ -81,6 +81,7 @@ export class SettingsComponent implements OnInit {
     this.selectedBank = null;
     this.clear();
   }
+
   exportJSON() {
     if (this.imageComponent) {
       this.imageComponent.exportJSON();
@@ -116,6 +117,7 @@ export class SettingsComponent implements OnInit {
       this.imageComponent.decreaseFontSize();
     }
   }
+
   toggleBold() {
     if (this.imageComponent) {
       this.imageComponent.toggleBold();
@@ -245,6 +247,7 @@ export class SettingsComponent implements OnInit {
       this.saveCheque();
     }
   }
+
   updateCheque(): void {
     if (this.imageComponent && this.savedCheque) {
       const updateCheque: Cheque = {
@@ -380,6 +383,7 @@ export class SettingsComponent implements OnInit {
       reader.readAsDataURL(file);
     });
   }
+
   resizeBGImage() {
     if (!this.isDisplayApplyBtn) {
       this.imageComponent.loadBackgroundImage(
@@ -389,6 +393,7 @@ export class SettingsComponent implements OnInit {
       );
     }
   }
+
   resizeBGImageEdit() {
     if (this.selectedBank != null) {
       this.imageComponent.resizeBackgroundImage(
@@ -397,6 +402,7 @@ export class SettingsComponent implements OnInit {
       );
     }
   }
+
   clear() {
     if (this.imageComponent) {
       this.chequeWidth = 0;
@@ -410,6 +416,7 @@ export class SettingsComponent implements OnInit {
       this.imageComponent.resetCanvas();
     }
   }
+
   onFileClear() {
     if (!this.savedCheque && !this.uploadFileFlag) {
       this.chequeWidth = 0;
