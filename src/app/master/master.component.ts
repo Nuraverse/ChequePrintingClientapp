@@ -389,18 +389,13 @@ export class MasterComponent implements OnInit {
       let totalAmount = 0;
 
       this.amountInWords1 = this.amountToWordsService.convert(
-        this.period1Periods == 1 ? this.period1LastAmount : this.period1Amount
+        this.period1Amount
       );
 
       const formattedDate = moment(this.firstChequeDate).format('DD-MM-YYYY');
       this.imageComponent.updateText(formattedDate, 0);
       this.imageComponent.splitTextBetweenTwoObjects(this.amountInWords1, 2, 3);
-      this.imageComponent.updateText(
-        (this.period1Periods == 1
-          ? this.period1LastAmount
-          : this.period1Amount) + '/',
-        4
-      );
+      this.imageComponent.updateText(this.period1Amount + '/', 4);
       this.imageComponent.updateText('---', 5);
 
       // Define a concise array of periods without prefixes
@@ -437,7 +432,7 @@ export class MasterComponent implements OnInit {
 
           if (period.periods === 1) {
             // Use last amount if available; otherwise, use the first amount
-            effectiveAmount = period.lastAmount || period.amount;
+            effectiveAmount = period.amount;
 
             // Directly add effectiveAmount to the amountDisplay without multiplication
             this.amountDisplay += `${index > 0 ? ' & ' : ''}${effectiveAmount}`;

@@ -78,28 +78,27 @@ export class ImageManipulationComponent implements OnInit {
       width: canvasWidth,
       height: canvasHeight,
     });
+
     this.canvas.renderAll();
     this.canvasBack.renderAll();
 
     fabric.FabricImage.fromURL(imageURL, { crossOrigin: 'anonymous' }).then(
       (img) => {
-        // Calculate scale ratios
-        const widthRatio = this.canvas.width / img.width;
-        const heightRatio = this.canvas.height / img.height;
+        // Store the original image dimensions to avoid altering the original
+        const originalWidth = img.width;
+        const originalHeight = img.height;
 
-        // Use the smaller ratio to maintain aspect ratio
-        const scale = Math.min(widthRatio, heightRatio);
-
-        // Scale the image
-        img.scale(scale);
-
-        // Center the image
+        // Set the background image dimensions to the canvas size
         img.set({
-          left: (this.canvas.width - img.width * scale) / 2,
-          top: (this.canvas.height - img.height * scale) / 2,
+          left: 0,
+          top: 0,
+          scaleX: canvasWidth / originalWidth, // Scale to fit the canvas width
+          scaleY: canvasHeight / originalHeight, // Scale to fit the canvas height
         });
 
+        // Set the image as the background
         this.canvas.backgroundImage = img;
+
         this.canvas.renderAll();
         this.canvasBack.renderAll();
       }
@@ -120,20 +119,19 @@ export class ImageManipulationComponent implements OnInit {
     this.canvasBack.renderAll();
     const img = this.canvas.backgroundImage;
     if (img) {
-      const widthRatio = this.canvas.width / img.width;
-      const heightRatio = this.canvas.height / img.height;
+      // Store the original image dimensions to avoid altering the original
+      const originalWidth = img.width;
+      const originalHeight = img.height;
 
-      // Use the smaller ratio to maintain aspect ratio
-      const scale = Math.min(widthRatio, heightRatio);
-
-      // Scale the image
-      img.scale(scale);
-
-      // Center the image
+      // Set the background image dimensions to the canvas size
       img.set({
-        left: (this.canvas.width - img.width * scale) / 2,
-        top: (this.canvas.height - img.height * scale) / 2,
+        left: 0,
+        top: 0,
+        scaleX: canvasWidth / originalWidth, // Scale to fit the canvas width
+        scaleY: canvasHeight / originalHeight, // Scale to fit the canvas height
       });
+
+      // Set the image as the background
       this.canvas.backgroundImage = img;
     }
     this.canvas.renderAll();
@@ -365,12 +363,31 @@ export class ImageManipulationComponent implements OnInit {
           this.updateText(period.periodAmount + '/', 4);
           this.updateText('---', 5);
         } else if (i === periodEndIndex) {
-          this.splitTextBetweenTwoObjects(
-            this.amountToWordsService.convert(period.periodLastAmount),
-            2,
-            3
-          );
-          this.updateText(period.periodLastAmount + '/', 4);
+          if (period.periods > 1) {
+            this.splitTextBetweenTwoObjects(
+              this.amountToWordsService.convert(
+                period.periodLastAmount
+                  ? period.periodLastAmount
+                  : period.periodAmount
+              ),
+              2,
+              3
+            );
+            this.updateText(
+              (period.periodLastAmount
+                ? period.periodLastAmount
+                : period.periodAmount) + '/',
+              4
+            );
+          } else {
+            this.splitTextBetweenTwoObjects(
+              this.amountToWordsService.convert(period.periodAmount),
+              2,
+              3
+            );
+            this.updateText(period.periodAmount + '/', 4);
+          }
+
           this.updateText('---', 5);
         }
 
@@ -653,12 +670,31 @@ export class ImageManipulationComponent implements OnInit {
           this.updateText(period.periodAmount + '/', 4);
           this.updateText('---', 5);
         } else if (i === periodEndIndex) {
-          this.splitTextBetweenTwoObjects(
-            this.amountToWordsService.convert(period.periodLastAmount),
-            2,
-            3
-          );
-          this.updateText(period.periodLastAmount + '/', 4);
+          if (period.periods > 1) {
+            this.splitTextBetweenTwoObjects(
+              this.amountToWordsService.convert(
+                period.periodLastAmount
+                  ? period.periodLastAmount
+                  : period.periodAmount
+              ),
+              2,
+              3
+            );
+            this.updateText(
+              (period.periodLastAmount
+                ? period.periodLastAmount
+                : period.periodAmount) + '/',
+              4
+            );
+          } else {
+            this.splitTextBetweenTwoObjects(
+              this.amountToWordsService.convert(period.periodAmount),
+              2,
+              3
+            );
+            this.updateText(period.periodAmount + '/', 4);
+          }
+
           this.updateText('---', 5);
         }
 
