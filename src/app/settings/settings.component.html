@@ -133,6 +133,26 @@
                   </p-inputGroup>
                 </div>
               </div>
+              <div class="field grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 170px"
+                  >Text Position:</label
+                >
+                <div class="col">
+                  <p-inputGroup [style]="{ width: '300px' }">
+                    <p-inputNumber
+                      inputId="minmaxfraction"
+                      mode="decimal"
+                      [minFractionDigits]="2"
+                      [maxFractionDigits]="5"
+                      [(ngModel)]="textTopPosition"
+                    />
+                    <p-inputGroupAddon>pixel</p-inputGroupAddon>
+                  </p-inputGroup>
+                </div>
+              </div>
             </div>
             <div class="col flex">
               <p-fileUpload
@@ -283,6 +303,26 @@
                   </p-inputGroup>
                 </div>
               </div>
+              <div class="field grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 170px"
+                  >Text Position:</label
+                >
+                <div class="col">
+                  <p-inputGroup [style]="{ width: '300px' }">
+                    <p-inputNumber
+                      inputId="minmaxfraction"
+                      mode="decimal"
+                      [minFractionDigits]="2"
+                      [maxFractionDigits]="5"
+                      [(ngModel)]="textTopPosition"
+                    />
+                    <p-inputGroupAddon>pixel</p-inputGroupAddon>
+                  </p-inputGroup>
+                </div>
+              </div>
             </div>
             <div class="col flex">
               <p-fileUpload
@@ -384,7 +424,7 @@
                     <label
                       for="path"
                       class="font-bold col-fixed"
-                      style="width: 170px"
+                      style="width: 80px"
                       >Height:</label
                     >
                     <div class="col">
@@ -421,6 +461,28 @@
                       [disabled]="true"
                     />
                     <p-inputGroupAddon>%</p-inputGroupAddon>
+                  </p-inputGroup>
+                </div>
+              </div>
+
+              <div class="field grid">
+                <label
+                  for="path"
+                  class="font-bold col-fixed"
+                  style="width: 170px"
+                  >Text Position:</label
+                >
+                <div class="col">
+                  <p-inputGroup [style]="{ width: '300px' }">
+                    <p-inputNumber
+                      inputId="minmaxfraction"
+                      mode="decimal"
+                      [minFractionDigits]="2"
+                      [maxFractionDigits]="5"
+                      [(ngModel)]="textTopPosition"
+                      [disabled]="true"
+                    />
+                    <p-inputGroupAddon>pixel</p-inputGroupAddon>
                   </p-inputGroup>
                 </div>
               </div>
@@ -597,12 +659,25 @@
             </div>
           </p-card>
         </div>
+
         <div class="col flex">
           <app-image-manipulation
             class="mr-2"
             (objectSelected)="onTextObjectSelection($event)"
           />
+
           <ng-container *ngIf="isSaveCancelButtonShow">
+            <div>
+              <p-checkbox
+                label=""
+                name="filed"
+                value="ChequeImage"
+                [binary]="true"
+                [(ngModel)]="isRemoveChequeImage"
+                class="mr-1"
+                pTooltip="Remove Background Cheque"
+              />
+            </div>
             <p-button
               [text]="true"
               [raised]="true"

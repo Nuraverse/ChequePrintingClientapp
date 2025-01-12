@@ -3,6 +3,7 @@ import * as fabric from 'fabric';
 import { Cheque, Period } from '../model/model';
 import { CommonUtils } from '../utils/common';
 import { AmountToWordsService } from '../service/amount-to-words/amount-to-words.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-image-manipulation',
@@ -18,7 +19,11 @@ export class ImageManipulationComponent implements OnInit {
   currentTextboxBackgroundColor = '#f3fbfd';
   @Output() objectSelected = new EventEmitter<fabric.FabricObject>();
 
-  constructor(private amountToWordsService: AmountToWordsService) {}
+  constructor(
+    private amountToWordsService: AmountToWordsService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
+  ) {}
 
   ngOnInit(): void {
     this.initializeCanvas();
@@ -46,6 +51,15 @@ export class ImageManipulationComponent implements OnInit {
       });
 
       this.canvasBack.loadFromJSON(canvasBackJSON).then(() => {
+        const textCount = this.canvasBack.getObjects('Textbox').length;
+        if (textCount == 1) {
+          this.addTextBack(
+            '',
+            this.canvasBack.getWidth() / 2 - 100,
+            this.canvasBack.getHeight() / 2 - 50,
+            200
+          );
+        }
         this.canvasBack.renderAll();
         console.log('Canvas Back has been successfully loaded from JSON');
       });
@@ -146,7 +160,18 @@ export class ImageManipulationComponent implements OnInit {
     this.addText('Rials', 30, 170, 50);
     this.addText('Baiza', 30, 210, 50);
     this.addText('A/C PAYEE', 30, 250, 80);
-    this.addTextBack('', 100);
+    this.addTextBack(
+      '',
+      this.canvasBack.getWidth() / 2 - 100,
+      this.canvasBack.getHeight() / 2 - 50,
+      200
+    );
+    this.addTextBack(
+      '',
+      this.canvasBack.getWidth() / 2 - 100,
+      this.canvasBack.getHeight() / 2,
+      200
+    );
   }
 
   private enableDragAndDrop() {
@@ -216,11 +241,11 @@ export class ImageManipulationComponent implements OnInit {
     });
   }
 
-  private addTextBack(text: string, width: number) {
+  private addTextBack(text: string, left: number, top: number, width: number) {
     // Create the text box
     const textObject = new fabric.Textbox(text, {
-      left: this.canvasBack.width / 2 - 50,
-      top: this.canvasBack.height / 2,
+      left: left,
+      top: top,
       fill: 'black',
       fontSize: 20,
       editable: false,
@@ -288,7 +313,9 @@ export class ImageManipulationComponent implements OnInit {
     autoMode: boolean,
     printType: string, // 'both', 'front', 'back'
     frequency: string,
-    printStartPosition: number
+    printStartPosition: number,
+    branch: string,
+    textTopPosition: number
   ) {
     let numberOfInstallment = 0;
 
@@ -315,6 +342,7 @@ export class ImageManipulationComponent implements OnInit {
     // Clear background and set transparent for printing
     objects.forEach((obj, index) => {
       if (obj.type === 'textbox') {
+        obj.top = obj.top + textTopPosition;
         obj.set('backgroundColor', 'transparent');
         if (index === 0) {
           this.currentTextboxBackgroundColor = obj.backgroundColor;
@@ -337,6 +365,7 @@ export class ImageManipulationComponent implements OnInit {
     // Array to hold data URLs for each page
     const frontDataUrls: string[] = [];
 
+    this.updateTextBack(branch, 1);
     this.updateTextBack(agreementNo + '', 0);
 
     const backDataUrl = this.canvasBack.toDataURL({
@@ -414,6 +443,7 @@ export class ImageManipulationComponent implements OnInit {
 
     objects.forEach((obj) => {
       if (obj.type === 'textbox') {
+        obj.top = obj.top - textTopPosition;
         obj.set('backgroundColor', this.currentTextboxBackgroundColor);
       }
     });
@@ -427,32 +457,50 @@ export class ImageManipulationComponent implements OnInit {
     this.canvas.renderAll();
     this.canvasBack.renderAll();
 
+    this.printCheques(
+      [frontDataUrls[0]],
+      backDataUrl,
+      printType,
+      printStartPosition,
+      true,
+      frontDataUrls
+    );
+  }
+
+  printCheques(
+    printDataUrls: string[],
+    backDataUrl: string,
+    printType: string,
+    printStartPosition: number,
+    triggerConfirmation: boolean,
+    allDataUrls: string[]
+  ) {
     // Build the print document
     const printWindow = window.open('', '_blank');
 
     if (printWindow) {
-      const imgTags = frontDataUrls
+      const imgTags = printDataUrls
         .map((frontDataUrl, index) => {
           const frontDataTag =
             printType === 'both' || printType === 'front'
               ? `<div class="page" style="${
-                  index < frontDataUrls.length - 1
+                  index < printDataUrls.length - 1
                     ? 'page-break-after: always;'
                     : ''
                 }">
-                   <img src="${frontDataUrl}" style="width: 100%; height: auto;" />
-                 </div>`
+               <img src="${frontDataUrl}" style="width: 100%; height: auto;" />
+             </div>`
               : '';
 
           const backDataTag =
             printType === 'both' || printType === 'back'
               ? `<div class="page" style="${
-                  index < frontDataUrls.length - 1
+                  index < printDataUrls.length - 1
                     ? 'page-break-after: always;'
                     : ''
                 }">
-                   <img src="${backDataUrl}" style="width: 100%; height: auto;" />
-                 </div>`
+               <img src="${backDataUrl}" style="width: 100%; height: auto;" />
+             </div>`
               : '';
 
           return frontDataTag + backDataTag;
@@ -461,49 +509,80 @@ export class ImageManipulationComponent implements OnInit {
 
       // HTML and CSS for the print window
       printWindow.document.write(`
-        <html>
-        <head>
-          <title>Print</title>
-          <style>
-            @page {
-              size: A4 portrait;
-              margin: 0;
-            }
-            body {
-              margin: 0;
-              background-color: white;
-            }
-            .page {
-              position: relative;
-              width: 100%;
-              height: 100%;
-              overflow: hidden; /* Prevent overflow */            
-            }
-          
-            @media print {
-              img {
-                width: 100%;  /* Ensure the image fits the width of the page */
-                height: auto;  /* Maintain aspect ratio */
-                transform: rotate(90deg);  /* Rotate the image 90 degrees */
-                top: 0;  /* Position it at the top of the page */
-                left: 0;  /* Position it at the left of the page */
-                margin-top: ${printStartPosition}%;               
-              }
-            }
-          </style>
-        </head>
-        <body>
-          ${imgTags}
-        </body>
-        </html>
-      `);
+    <html>
+    <head>
+      <title>Print</title>
+      <style>
+        @page {
+          size: A4 portrait;
+          margin: 0;
+        }
+        body {
+          margin: 0;
+          background-color: white;
+        }
+        .page {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          overflow: hidden; /* Prevent overflow */            
+        }
+      
+        @media print {
+          img {
+            width: 100%;  /* Ensure the image fits the width of the page */
+            height: auto;  /* Maintain aspect ratio */
+            transform: rotate(90deg);  /* Rotate the image 90 degrees */
+            top: 0;  /* Position it at the top of the page */
+            left: 0;  /* Position it at the left of the page */
+            margin-top: ${printStartPosition}%;               
+          }
+        }
+      </style>
+    </head>
+    <body>
+      ${imgTags}
+    </body>
+    </html>
+  `);
 
       printWindow.document.close();
       printWindow.onload = () => {
+        printWindow.onafterprint = () => {
+          if (triggerConfirmation && allDataUrls.length > 1) {
+            setTimeout(() => {
+              this.confirmationService.confirm({
+                message:
+                  'Are you sure you want to print the rest of the cheques?',
+                header: 'Confirmation',
+                icon: 'pi pi-exclamation-triangle',
+                acceptButtonStyleClass: 'p-button-success ml-2',
+                rejectButtonStyleClass: 'p-button-warning',
+                accept: () => {
+                  this.printCheques(
+                    allDataUrls.slice(1),
+                    backDataUrl,
+                    printType,
+                    printStartPosition,
+                    false,
+                    []
+                  );
+                },
+                reject: () => {
+                  this.messageService.add({
+                    severity: 'info',
+                    summary: 'Cancelled',
+                    detail: 'Remaining cheques have been cancelled.',
+                  });
+                },
+              });
+            }, 600);
+          }
+          printWindow.close();
+        };
         setTimeout(() => {
           printWindow.print();
-          printWindow.close();
-        }, 500);
+        }, 200);
       };
     } else {
       console.error(
@@ -512,8 +591,40 @@ export class ImageManipulationComponent implements OnInit {
     }
   }
 
-  printSettingsCanvas(printStartPosition: number) {
+  printSettingsCanvas(
+    printStartPosition: number,
+    textTopPosition: number,
+    isRemoveChequeImage: boolean
+  ) {
     // Array to hold data URLs for each page
+
+    const originalBackgroundImage = this.canvas.backgroundImage;
+    const objects = this.canvas.getObjects();
+    const objectsBack = this.canvasBack.getObjects();
+
+    objects.forEach((obj, index) => {
+      if (index == 0) {
+        this.currentTextboxBackgroundColor = obj.backgroundColor;
+      }
+      if (obj.type === 'textbox') {
+        if(isRemoveChequeImage){
+        obj.set('backgroundColor', 'transparent');
+        }
+        obj.top = obj.top + textTopPosition;
+      }
+    });
+
+    objectsBack.forEach((obj) => {
+      if (obj.type === 'textbox' && isRemoveChequeImage) {
+        obj.set('backgroundColor', 'transparent');
+      }
+    });
+
+    if (isRemoveChequeImage) {
+      this.canvas.backgroundImage = undefined; // Clear the background image
+      this.canvas.backgroundColor = 'transparent';
+    }
+
     const frontImageUrl = this.canvas.toDataURL({
       format: 'png',
       quality: 1,
@@ -525,6 +636,24 @@ export class ImageManipulationComponent implements OnInit {
       quality: 1,
       multiplier: 3,
     });
+
+    objects.forEach((obj) => {
+      if (obj.type === 'textbox') {
+        obj.top = obj.top - textTopPosition;
+        obj.set('backgroundColor', this.currentTextboxBackgroundColor);
+      }
+    });
+
+    objectsBack.forEach((objback) => {
+      if (objback.type === 'textbox') {
+        objback.set('backgroundColor', this.currentTextboxBackgroundColor);
+      }
+    });
+
+    if (isRemoveChequeImage) {
+      this.canvas.backgroundImage = originalBackgroundImage;
+    }
+
     const frontImage = `<div class="page" >
     <img src="${frontImageUrl}" style="width: 100%; height: auto;" />
   </div>`;
@@ -596,7 +725,8 @@ export class ImageManipulationComponent implements OnInit {
     agreementNo: number,
     autoMode: boolean,
     printType: string, // 'both', 'front', 'back'
-    frequency: string
+    frequency: string,
+    branch: string
   ) {
     let numberOfInstallment = 0;
 
@@ -645,6 +775,7 @@ export class ImageManipulationComponent implements OnInit {
     // Array to hold data URLs for each page
     const frontDataUrls: string[] = [];
 
+    this.updateTextBack(branch, 1);
     this.updateTextBack(agreementNo + '', 0);
 
     const backDataUrl = this.canvasBack.toDataURL({

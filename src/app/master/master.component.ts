@@ -62,6 +62,7 @@ export class MasterComponent implements OnInit {
     { label: 'Back', value: 'back' },
     { label: 'Both', value: 'both' },
   ];
+  branch = '';
 
   frequencyOptions: Frequency[] = [
     { label: 'Monthly', value: 'M' },
@@ -240,7 +241,8 @@ export class MasterComponent implements OnInit {
           this.agreementNo,
           this.autoMode,
           this.printValue,
-          this.selectedFrequency?.value
+          this.selectedFrequency?.value,
+          this.branch
         );
       }
     }
@@ -274,7 +276,9 @@ export class MasterComponent implements OnInit {
               this.autoMode,
               this.printValue,
               this.selectedFrequency?.value,
-              this.selectedChequeObject.printStartPosition
+              this.selectedChequeObject.printStartPosition,
+              this.branch,
+              this.selectedChequeObject.textTopPosition
             );
           }
         },
@@ -465,6 +469,9 @@ export class MasterComponent implements OnInit {
 
       if (this.agreementNo !== 0) {
         this.imageComponent.updateTextBack(this.agreementNo + '', 0);
+      }
+      if (this.branch != '') {
+        this.imageComponent.updateTextBack(this.branch, 1);
       }
       this.showBackgroundColor = false;
       this.toggleBackgroundColor();

@@ -35,6 +35,8 @@ export class SettingsComponent implements OnInit {
   uploadFileFlag = false;
   isTextNavigation = false;
   printStartPosition = 29.0;
+  textTopPosition = 10;
+  isRemoveChequeImage = false;
 
   @ViewChild(ImageManipulationComponent)
   imageComponent!: ImageManipulationComponent;
@@ -160,6 +162,7 @@ export class SettingsComponent implements OnInit {
           this.chequeWidth = cheque.chequeWidth;
           this.chequeHeight = cheque.chequeHeight;
           this.printStartPosition = cheque.printStartPosition;
+          this.textTopPosition = cheque.textTopPosition;
           if (this.imageComponent) {
             this.imageComponent.resizeAndLoadCanvas(cheque);
           }
@@ -264,6 +267,7 @@ export class SettingsComponent implements OnInit {
         updatedUserId: 0,
         updatedBy: 'system',
         updatedDate: new Date(),
+        textTopPosition: this.textTopPosition,
       };
       if (this.savedCheque.id) {
         this.chequeService
@@ -305,6 +309,7 @@ export class SettingsComponent implements OnInit {
         createdBy: 'system',
         createdDate: new Date(),
         printStartPosition: this.printStartPosition,
+        textTopPosition: this.textTopPosition,
       };
 
       this.chequeService.createCheque(cheque).subscribe({
@@ -443,7 +448,11 @@ export class SettingsComponent implements OnInit {
 
   printSettingsCanvas() {
     if (this.imageComponent) {
-      this.imageComponent.printSettingsCanvas(this.printStartPosition);
+      this.imageComponent.printSettingsCanvas(
+        this.printStartPosition,
+        this.textTopPosition,
+        this.isRemoveChequeImage
+      );
     }
   }
 }

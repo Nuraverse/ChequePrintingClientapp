@@ -22,6 +22,7 @@ export interface Cheque {
   updatedBy?: string;
   updatedDate?: Date;
   printStartPosition: number;
+  textTopPosition: number;
 }
 
 export interface Bank {

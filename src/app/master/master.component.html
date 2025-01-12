@@ -266,35 +266,54 @@
           </div>
 
           <div class="border-1 border-round p-2">
-            <div class="col grid mt-2">
-              <label for="conractNo" class="font-bold mt-2" style="width: 200px"
-                >Contract No:</label
-              >
-              <div class="">
-                <p-inputNumber
-                  inputId="conractNo"
-                  [(ngModel)]="agreementNo"
-                  [style]="{ width: '300px' }"
-                  [disabled]="!period1Checked || selectedBank == null"
-                  [useGrouping]="false"
-                />
-              </div>
+            <div class="grid col p-0">
+              <div class="col-12 md:col-6">
+                <div class="col grid mt-2">
+                  <label
+                    for="conractNo"
+                    class="font-bold mt-2"
+                    style="width: 200px"
+                    >Contract No:</label
+                  >
+                  <div class="">
+                    <p-inputNumber
+                      inputId="conractNo"
+                      [(ngModel)]="agreementNo"
+                      [style]="{ width: '300px' }"
+                      [disabled]="!period1Checked || selectedBank == null"
+                      [useGrouping]="false"
+                    />
+                  </div>
 
-              <p-button
-                label="Apply"
-                [raised]="true"
-                size="small"
-                severity="info"
-                class="ml-3 mt-1"
-                [disabled]="
-                  !period1Checked ||
-                  agreementNo == undefined ||
-                  agreementNo == 0 ||
-                  !autoMode ||
-                  selectedBank == null
-                "
-                (onClick)="fetchAgreement()"
-              />
+                  <p-button
+                    label="Apply"
+                    [raised]="true"
+                    size="small"
+                    severity="info"
+                    class="ml-3 mt-1"
+                    [disabled]="
+                      !period1Checked ||
+                      agreementNo == undefined ||
+                      agreementNo == 0 ||
+                      !autoMode ||
+                      selectedBank == null
+                    "
+                    (onClick)="fetchAgreement()"
+                  />
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="col grid mt-2">
+                  <label
+                    for="branch"
+                    class="font-bold mt-2"
+                    style="width: 200px"
+                    >Branch:</label
+                  >
+
+                  <input type="text" class="p-inputtext p-component p-element col-6 ml-1" [(ngModel)]="branch" />
+                </div>
+              </div>
             </div>
             <div class="grid col p-0">
               <div class="col-12 md:col-6">

@@ -13,6 +13,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { FileUploadModule } from 'primeng/fileupload';
+import { TooltipModule } from 'primeng/tooltip';
 import { ImageManipulationComponent } from './image-manipulation/image-manipulation.component'; // Adjust path accordingly
 import { provideHttpClient } from '@angular/common/http';
 import { ChequeService } from './service/cheque/cheque-service.service';
@@ -44,6 +45,7 @@ import { AgreemrntService } from './service/contract/contract-service.service';
     ToastModule,
     ConfirmDialogModule,
     SelectButtonModule,
+    TooltipModule,
   ],
   exports: [
     ImageModule,
@@ -64,6 +66,7 @@ import { AgreemrntService } from './service/contract/contract-service.service';
     ToastModule,
     ConfirmDialogModule,
     SelectButtonModule,
+    TooltipModule,
   ],
   providers: [
     provideHttpClient(),
