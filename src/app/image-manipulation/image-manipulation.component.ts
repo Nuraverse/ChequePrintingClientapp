@@ -42,6 +42,7 @@ export class ImageManipulationComponent implements OnInit {
         width: data.canvasWidth,
         height: data.canvasHeight,
       });
+
       const canvasJSON = JSON.parse(data.chequeConfigFront);
       const canvasBackJSON = JSON.parse(data.chequeConfigBack);
 
@@ -60,6 +61,7 @@ export class ImageManipulationComponent implements OnInit {
             200
           );
         }
+
         this.canvasBack.renderAll();
         console.log('Canvas Back has been successfully loaded from JSON');
       });
@@ -70,11 +72,13 @@ export class ImageManipulationComponent implements OnInit {
     this.canvas = new fabric.Canvas('canvas', {
       backgroundColor: '#f3f4f6',
     });
+
     this.canvas.renderAll.bind(this.canvas);
 
     this.canvasBack = new fabric.Canvas('canvasBack', {
       backgroundColor: 'transparent',
     });
+
     this.canvasBack.renderAll.bind(this.canvasBack);
   }
 
@@ -92,7 +96,6 @@ export class ImageManipulationComponent implements OnInit {
       width: canvasWidth,
       height: canvasHeight,
     });
-
     this.canvas.renderAll();
     this.canvasBack.renderAll();
 
@@ -124,7 +127,7 @@ export class ImageManipulationComponent implements OnInit {
       width: canvasWidth,
       height: canvasHeight,
     });
-
+    
     this.canvasBack.setDimensions({
       width: canvasWidth,
       height: canvasHeight,
@@ -488,7 +491,9 @@ export class ImageManipulationComponent implements OnInit {
                     ? 'page-break-after: always;'
                     : ''
                 }">
-               <img src="${frontDataUrl}" style="width: 100%; height: auto;" />
+               <img src="${frontDataUrl}" style="width:${
+                  this.canvas.width
+                }; height: ${this.canvas.height};" />
              </div>`
               : '';
 
@@ -499,7 +504,9 @@ export class ImageManipulationComponent implements OnInit {
                     ? 'page-break-after: always;'
                     : ''
                 }">
-               <img src="${backDataUrl}" style="width: 100%; height: auto;" />
+               <img src="${backDataUrl}" style="width:${
+                  this.canvasBack.width
+                }; height: ${this.canvasBack.height};" />
              </div>`
               : '';
 
@@ -515,29 +522,36 @@ export class ImageManipulationComponent implements OnInit {
       <style>
         @page {
           size: A4 portrait;
-          margin: 0;
+          margin: 0; 
         }
+
         body {
           margin: 0;
+          padding: 0;
           background-color: white;
         }
+
         .page {
           position: relative;
-          width: 100%;
-          height: 100%;
-          overflow: hidden; /* Prevent overflow */            
+          width: 210mm;  
+          height: 297mm; 
+          display: flex;
+          justify-content: flex-start;
+          align-items: flex-start; 
+          overflow: hidden; 
         }
-      
+
         @media print {
           img {
-            width: 100%;  /* Ensure the image fits the width of the page */
-            height: auto;  /* Maintain aspect ratio */
-            transform: rotate(90deg);  /* Rotate the image 90 degrees */
-            top: 0;  /* Position it at the top of the page */
-            left: 0;  /* Position it at the left of the page */
-            margin-top: ${printStartPosition}%;               
+            margin: 0;
+            display: block;
+            transform: translateX(-50%) rotate(90deg);
+            position: absolute;
+            top: ${printStartPosition}%; 
+            left: 50%;                
           }
         }
+
       </style>
     </head>
     <body>
@@ -607,8 +621,8 @@ export class ImageManipulationComponent implements OnInit {
         this.currentTextboxBackgroundColor = obj.backgroundColor;
       }
       if (obj.type === 'textbox') {
-        if(isRemoveChequeImage){
-        obj.set('backgroundColor', 'transparent');
+        if (isRemoveChequeImage) {
+          obj.set('backgroundColor', 'transparent');
         }
         obj.top = obj.top + textTopPosition;
       }
@@ -655,10 +669,10 @@ export class ImageManipulationComponent implements OnInit {
     }
 
     const frontImage = `<div class="page" >
-    <img src="${frontImageUrl}" style="width: 100%; height: auto;" />
+    <img src="${frontImageUrl}" style="width:${this.canvas.width}; height: ${this.canvas.height};" />
   </div>`;
     const backImage = `<div class="page" >
-            <img src="${backImageUrl}" style="width: 100%; height: auto;" />
+            <img src="${backImageUrl}" style="width:${this.canvasBack.width}; height: ${this.canvasBack.height};" />
           </div>`;
 
     const imgTags = frontImage + backImage;
@@ -674,27 +688,33 @@ export class ImageManipulationComponent implements OnInit {
           <style>
             @page {
               size: A4 portrait;
-              margin: 0;
+              margin: 0; 
             }
+
             body {
               margin: 0;
+              padding: 0;
               background-color: white;
             }
+
             .page {
               position: relative;
-              width: 100%;
-              height: 100%;
-              overflow: hidden; /* Prevent overflow */
+              width: 210mm;  
+              height: 297mm; 
+              display: flex;
+              justify-content: flex-start;
+              align-items: flex-start; 
+              overflow: hidden; 
             }
-          
+
             @media print {
               img {
-                width: 100%;  /* Ensure the image fits the width of the page */
-                height: auto;  /* Maintain aspect ratio */
-                transform: rotate(90deg);  /* Rotate the image 90 degrees */
-                top: 0;  /* Position it at the top of the page */
-                left: 0;  /* Position it at the left of the page */
-                margin-top: ${printStartPosition}%;               
+                margin: 0;
+                display: block;
+                transform: translateX(-50%) rotate(90deg);
+                position: absolute;
+                top: ${printStartPosition}%; 
+                left: 50%;                
               }
             }
           </style>
@@ -874,7 +894,7 @@ export class ImageManipulationComponent implements OnInit {
           const backDataTag =
             printType === 'both' || printType === 'back'
               ? `<div class="page">
-                   <img src="${backDataUrl}" />
+                   <img src="${backDataUrl}" style="width:${this.canvasBack.width}; height: ${this.canvasBack.height};"/>
                  </div>`
               : '';
 
@@ -885,7 +905,9 @@ export class ImageManipulationComponent implements OnInit {
                     ? 'page-break-after: always;'
                     : ''
                 }">
-                   <img src="${frontDataUrl}" />
+                   <img src="${frontDataUrl}" style="width:${
+                  this.canvas.width
+                }; height: ${this.canvas.height};"/>
                  </div>`
               : '';
 
@@ -914,16 +936,6 @@ export class ImageManipulationComponent implements OnInit {
               overflow: hidden; /* Prevent overflow */
             }
           
-            @media print {
-              img {
-                width: 100%;  /* Ensure the image fits the width of the page */
-                height: auto;  /* Maintain aspect ratio */
-                transform: rotate(90deg);  /* Rotate the image 90 degrees */
-                top: 0;  /* Position it at the top of the page */
-                left: 0;  /* Position it at the left of the page */
-                margin-top: 29.0%;               
-              }
-            }
           </style>
         </head>
         <body>

@@ -236,11 +236,11 @@ export class SettingsComponent implements OnInit {
   }
 
   cmToPixels(cm: number, dpi = 96): number {
-    return parseFloat((cm * (dpi / 2.54)).toFixed(2));
+    return Math.round(cm * (dpi / 2.54));
   }
 
   pixelsToCm(pixels: number, dpi = 96): number {
-    return parseFloat(((pixels / dpi) * 2.54).toFixed(2));
+    return Math.round((pixels / dpi) * 2.54);
   }
 
   saveOrUpdateCheque() {
